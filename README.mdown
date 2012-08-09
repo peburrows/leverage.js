@@ -1,0 +1,38 @@
+# Main Goals
+* two-way data bindings (models <--> templates)
+* event-based
+* modular
+* extensible
+  * validations?
+  * callbacks
+
+## Template stuff: (I'm not sold on the binding tag)
+```javascript
+{% evaluate %}
+{= interpolation =}             : {== escapedInterpolation ==}
+{=> binding <=}                 : {==> escapedBinding <==}
+{<= templateToModelBinding =>}
+{=> twoWayBinding =>}           : {==> escapedTwoWayBinding ==>}
+```
+
+*Bind template to the model*
+```javascript
+  "{=> user.firstName <=}"
+  // would essentially become:
+  "{% bind(user, 'firstName', 75044602054567897090); %}" +
+  "<span class='data-bind-75044602054567897090'>{{ user.firstName }}</span>"
+```
+
+// we could parse the template to find what we should be binding to
+function bind(obj, prop, hash){
+  // need to somehow make sure we don't set up this binding more than once
+  if(!BindingsGateKeeper.bindings[hash]){
+    obj.on('change:' + prop, function(newVal){
+      $('.data-bind-' + hash).text(newVal);
+    });
+  }
+}
+
+form field bindings (within a template)
+we need a way to say "push changes from this field into the model"
+<input type="text" value="{{ user.firstName }}" { user.firstName =>} >

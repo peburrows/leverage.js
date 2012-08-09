@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script type="text/javascript" src="underscore.1.3.3.min.js"></script>
+    <script type="text/javascript" src="lib/events.js"></script>
+    <script type="text/javascript" src="lib/template.js"></script>
+    <script type="text/javascript" src="lib/utils.js"></script>
+    <script type="text/javascript">
+      var User = function(attrs){
+        for(key in attrs){ this[key] = attrs[key]; }
+      };
+
+      User.include(Events);
+
+      User.prototype.set = function(attr, val, shouldTrigger){
+        if(shouldTrigger == null) shouldTrigger = true;
+        this[attr] = val;
+        if(shouldTrigger) this.trigger('change:' + attr, val);
+      };
+
+      User.prototype.fullName = function(){
+        return this.firstName + ' ' + this.lastName;
+      }.boundTo('firstName', 'lastName');
+
+      var Thing = {
+        youSir: 'noway',
+        what: function(){
+          return "the truth"
+        }.boundTo('youSir')
+      };
+
+
+      var user = new User({firstName: 'Phil', lastName: 'Burrows', id:'1234'});
+      user.init();
+
+      var bound1 = new Template('<h3>Rendered at {= new Date() =}</h3><p>Hello, {=> firstName <=}</p>');
+      var bound2 = new Template('<p>Can be bound in multiple places, within multiple templates: {=> user.fullName() <=}</p>');
+      var bound3 = new Template('<p>Binding is optional though: {= user.firstName =}</p>');
+
+      $(document).ready(function(){
+        $('body')
+          .append(bound1(user))
+          .append(bound2({user: user}))
+          .append(bound3({user: user}));
+      });
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
