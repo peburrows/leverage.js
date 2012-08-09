@@ -6,7 +6,7 @@
   * validations?
   * callbacks
 
-## Template stuff: (I'm not sold on the binding tag)
+## Template stuff:
 ```javascript
 {% evaluate %}
 {= interpolation =}             : {== escapedInterpolation ==}
@@ -26,7 +26,7 @@
 form field bindings (within a template)
 we need a way to say "push changes from this field into the model"
 ```html
-<input type="text" value="{{ user.firstName }}" { user.firstName =>}>
+<input type="text" value="{{ user.firstName }}" {<= user.firstName =>} >
 ```
 
 //
