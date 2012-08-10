@@ -5,33 +5,25 @@
     <script type="text/javascript" src="lib/events.js"></script>
     <script type="text/javascript" src="lib/template.js"></script>
     <script type="text/javascript" src="lib/utils.js"></script>
+    <script type="text/javascript" src="lib/model.js"></script>
     <script type="text/javascript">
       var User = function(attrs){
-        for(key in attrs){ this[key] = attrs[key]; }
+
       };
 
-      User.include(Events);
+      // User.include(Leverage.Events);
 
-      User.prototype.set = function(attr, val, shouldTrigger){
-        if(shouldTrigger == null) shouldTrigger = true;
-        this[attr] = val;
-        if(shouldTrigger) this.trigger('change:' + attr, val);
-      };
+      var User = Leverage.Model.extend({
+        initialize: function(attrs){
+          for(key in attrs){ this[key] = attrs[key]; }
+        },
 
-      User.prototype.fullName = function(){
-        return this.firstName + ' ' + this.lastName;
-      }.boundTo('firstName', 'lastName');
+        fullName: function(){
+          return this.firstName + ' ' + this.lastName;
+        }.boundTo('firstName', 'lastName')
+      });
 
-      var Thing = {
-        youSir: 'noway',
-        what: function(){
-          return "the truth"
-        }.boundTo('youSir')
-      };
-
-
-      var user = new User({firstName: 'Phil', lastName: 'Burrows', id:'1234'});
-      user.init();
+      var user = new User({firstName: 'Phil', lastName: 'Burrows'});
 
       var bound1 = new Template('<h3>Rendered at {= new Date() =}</h3><p>Hello, {=> firstName <=}</p>');
       var bound2 = new Template('<p>Can be bound in multiple places, within multiple templates: {=> user.fullName() <=}</p>');
