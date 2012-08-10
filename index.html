@@ -22,8 +22,9 @@
       });
 
       User.validatesPresenceOf('firstName');
+      User.validatesLengthOf('firstName', 2);
 
-      var user = new User({firstName: 'Phil', lastName: 'Burrows'});
+      var user = new User({firstName: 'P', lastName: 'Burrows'});
 
       // user._leverage.addError = __bind(user._leverage.addError, user);
 
