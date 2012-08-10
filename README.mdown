@@ -1,10 +1,8 @@
-# Main Goals
-* two-way data bindings (models <--> templates)
-* event-based
-* modular
-* extensible
-  * validations?
-  * callbacks
+# Features
+* data bindings (models --> templates)
+* modular, extensible
+* validations
+* callbacks
 
 ## Template stuff:
 ```javascript
