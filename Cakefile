@@ -35,6 +35,12 @@ task 'test', 'Run the test suite', ->
     process.chdir __dirname
     reporters.default.run ['test']
 
+task 'watch-tests', 'Compile all the tests', ->
+  options = ['-w', '-c', '-o', 'test/lib', 'test/src']
+  coffee = spawn 'coffee', options
+  coffee.stdout.on 'data', (data) -> print data.toString()
+  coffee.stderr.on 'data', (data) -> print data.toString()
+
 task 'release', 'Compile all the javascript files into one', ->
   out = 'leverage.js'
   fs.unlinkSync(out) if fs.existsSync(out)
