@@ -29,9 +29,9 @@
 
       // user._leverage.addError = __bind(user._leverage.addError, user);
 
-      var bound1 = new Template('<h3>Rendered at {= new Date() =}</h3><p>Hello, {=> firstName <=}</p>');
-      var bound2 = new Template('<p>Can be bound in multiple places, within multiple templates: {=> user.fullName() <=}</p>');
-      var bound3 = new Template('<p>Binding is optional though: {= user.firstName =}</p>');
+      var bound1 = new Leverage.Template('<h3>Rendered at {= new Date() =}</h3><p>Hello, {=> firstName <=}</p>');
+      var bound2 = new Leverage.Template('<p>Can be bound in multiple places, within multiple templates: {=> user.fullName() <=}</p>');
+      var bound3 = new Leverage.Template('<p>Binding is optional though: {= user.firstName =}</p>');
 
       $(document).ready(function(){
         $('body')

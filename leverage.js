@@ -117,15 +117,16 @@
         var orig = this.prototype[fn];
         this.prototype[fn] = function(){
           callback.apply(this, arguments);
-          orig.apply(this, arguments);
+          return orig.apply(this, arguments);
         };
       },
 
       after: function(fn, callback){
         var orig = this.prototype[fn];
         this.prototype[fn] = function(){
-          orig.apply(this, arguments);
+          var ret = orig.apply(this, arguments);
           callback.apply(this, arguments);
+          return ret;
         };
       }
     }
@@ -358,5 +359,5 @@
 
   Template.allBindings = {};
 
-  this.Template = Template;
+  this.Leverage.Template = Template;
 }).call(this);
