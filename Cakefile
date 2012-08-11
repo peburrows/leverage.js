@@ -34,3 +34,10 @@ task 'test', 'Run the test suite', ->
     {reporters} = require 'nodeunit'
     process.chdir __dirname
     reporters.default.run ['test']
+
+task 'release', 'Compile all the javascript files into one', ->
+  fs.unlinkSync('lib/leverage.build.js')
+  sprockets = spawn 'sprockets', ['lib/leverage.js', '--include=lib']
+  sprockets.stdout.on 'data', (data) -> fs.appendFile 'lib/leverage.build.js', data
+  sprockets.stderr.on 'data', (data) -> print data.toString()
+  sprockets.on 'exit', (status) -> print 'successfully built\n' if status is 0
