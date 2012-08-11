@@ -1,5 +1,4 @@
 describe 'Leverage Utils', ->
-  console.log("do we do this before everything?")
   User = ->
   FullModule =
     instanceMethods: { instanceMethod: -> }

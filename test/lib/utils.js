@@ -2,7 +2,6 @@
 
   describe('Leverage Utils', function() {
     var FullModule, SingleModule, User;
-    console.log("do we do this before everything?");
     User = function() {};
     FullModule = {
       instanceMethods: {
