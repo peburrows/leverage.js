@@ -36,8 +36,9 @@ task 'test', 'Run the test suite', ->
     reporters.default.run ['test']
 
 task 'release', 'Compile all the javascript files into one', ->
-  fs.unlinkSync('leverage.js')
+  out = 'leverage.js'
+  fs.unlinkSync(out) if fs.existsSync(out)
   sprockets = spawn 'sprockets', ['lib/leverage.js', '--include=lib']
-  sprockets.stdout.on 'data', (data) -> fs.appendFile 'leverage.js', data.toString().replace(/^\n+/, '\n')
+  sprockets.stdout.on 'data', (data) -> fs.appendFile out, data.toString().replace(/^\n+/, '\n')
   sprockets.stderr.on 'data', (data) -> print data.toString()
   sprockets.on 'exit', (status) -> print 'successfully built\n' if status is 0
