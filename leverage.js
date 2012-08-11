@@ -178,33 +178,14 @@
 
   this.Leverage.Events = Events;
 }).call(this);
-(function(){
-  var setupBindings = function(obj){
-    for(prop in obj){
-      if(obj[prop].__boundProperties){
-        for (var i = obj[prop].__boundProperties.length - 1; i >= 0; i--) {
-          var e = 'change:' + obj[prop].__boundProperties[i]
-            , t = 'change:' + prop;
-          obj.bind(e , function(){
-            obj.trigger(t);
-          });
-        };
-      }
-    }
-  };
-
-  // we should eventually extract all this stuff out to a higher-level thing
-  // probably something like Leverage.Class
-
-  var Model = function(){
+;(function(){
+  var Class = function(){
     this.initialize.apply(this, arguments);
-    Leverage.bindLeverageFunctions(this);
-    setupBindings(this);
   };
 
-  Model.prototype.initialize = function(){};
+  Class.prototype.initialize = function(){};
 
-  Model.extend = function(instanceProps, classProps){
+  Class.extend = function(instanceProps, classProps){
     var child
       , parent = this;
 
@@ -223,13 +204,35 @@
     return child;
   };
 
-  Model.prototype.set = function(attr, val, shouldTrigger){
-    if(shouldTrigger == null) shouldTrigger = true;
-    this[attr] = val;
-    if(shouldTrigger) this.trigger('change:' + attr, val);
+  this.Leverage.Class = Class;
+}).call(this);
+(function(){
+  var setupBindings = function(obj){
+    for(prop in obj){
+      if(obj[prop].__boundProperties){
+        for (var i = obj[prop].__boundProperties.length - 1; i >= 0; i--) {
+          var e = 'change:' + obj[prop].__boundProperties[i]
+            , t = 'change:' + prop;
+          obj.bind(e , function(){
+            obj.trigger(t);
+          });
+        };
+      }
+    }
   };
 
+  var Model = Leverage.Class.extend({
+    initialize: function(){
+      Leverage.bindLeverageFunctions(this);
+      setupBindings(this);
+    },
 
+    set: function(attr, val, shouldTrigger){
+      if(shouldTrigger == null) shouldTrigger = true;
+      this[attr] = val;
+      if(shouldTrigger) this.trigger('change:' + attr, val);
+    }
+  });
 
   Model.include(Leverage.Events);
   Model.include(Leverage.Validations);
