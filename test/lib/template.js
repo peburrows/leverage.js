@@ -70,7 +70,6 @@
               fullName: fullName.boundTo('firstName', 'lastName')
             });
             this.user = new User;
-            console.log('the user', this.user);
             this.template = new Leverage.Template('{=> user.fullName() <=}');
             return $('#body').html(this.template({
               user: this.user

@@ -53,7 +53,6 @@ describe 'Leverage.Template', ->
           }
 
           @user = new User
-          console.log('the user', @user)
           @template = new Leverage.Template( '{=> user.fullName() <=}' )
           $('#body').html(@template(user:@user))
 
