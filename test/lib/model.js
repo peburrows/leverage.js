@@ -1,27 +1,30 @@
 (function() {
 
   describe('Leverage.Model', function() {
-    var User, fullName, user;
+    var User, fullName;
     fullName = function() {};
     User = Leverage.Model.extend({
       fullName: fullName.boundTo('firstName', 'lastName')
     });
-    user = new User;
     beforeEach(function() {
-      return spyOn(user, 'trigger').andCallThrough();
+      this.user = new User;
+      return spyOn(this.user, 'trigger').andCallThrough();
     });
     return describe('an instance', function() {
+      it("should have an id assigned", function() {
+        return expect(this.user.id).toBeDefined();
+      });
       it("should allow setting of attributes", function() {
-        user.set('firstName', 'Phil');
-        return expect(user.firstName).toEqual('Phil');
+        this.user.set('firstName', 'Phil');
+        return expect(this.user.firstName).toEqual('Phil');
       });
       it("should fire a change event when an attribute is set via the set method", function() {
-        user.set('lastName', 'Burrows');
-        return expect(user.trigger).toHaveBeenCalled();
+        this.user.set('lastName', 'Burrows');
+        return expect(this.user.trigger).toHaveBeenCalled();
       });
       return it("should fire change events on bound functions when props are changed", function() {
-        user.set('firstName', 'Phil');
-        return expect(user.trigger).toHaveBeenCalledWith('change:fullName');
+        this.user.set('firstName', 'Phil');
+        return expect(this.user.trigger).toHaveBeenCalledWith('change:fullName');
       });
     });
   });

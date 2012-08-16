@@ -181,6 +181,10 @@
 }).call(this);
 ;(function(){
   var Class = function(){
+    if(typeof this.__initialize !== 'undefined'){
+      // for internal initialization that shouldn't be overwritten
+      this.__initialize.apply(this, arguments);
+    }
     this.initialize.apply(this, arguments);
   };
 
@@ -208,6 +212,13 @@
   this.Leverage.Class = Class;
 }).call(this);
 (function(){
+  var guid = function() {
+    var S4 = function() {
+       return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+    };
+    return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
+  };
+
   var setupBindings = function(obj){
     for(prop in obj){
       if(obj[prop].__boundProperties){
@@ -223,9 +234,10 @@
   };
 
   var Model = Leverage.Class.extend({
-    initialize: function(){
+    __initialize: function(){
       Leverage.bindLeverageFunctions(this);
       setupBindings(this);
+      this.id = this.id || guid();
     },
 
     set: function(attr, val, shouldTrigger){
@@ -330,7 +342,7 @@
     source = "var __p='';" +
       "var print=function(){__p+=Array.prototype.join.call(arguments, '')};\n" +
       "var __className=function(binder, attr){ return 'data-bind-'+binder.id+'-'+attr.replace(/\(\)\s*$/, ''); };" +
-      "var __bind=function(binder, attr, isFunc){ var c=__className(binder,attr); if(!Template.allBindings[c]){ binder.bind('change:'+attr, function(newVal){var h = $('.'+c); if(isFunc){ h.text(binder[attr]()); }else{ h.text(newVal); } }); Template.allBindings[c]=true; } return''; };\n" +
+      "var __bind=function(binder, attr, isFunc){ var c=__className(binder,attr); if(!Leverage.Template.allBindings[c]){ binder.bind('change:'+attr, function(newVal){var h = $('.'+c); if(isFunc){ h.text(binder[attr]()); }else{ h.text(newVal); } }); Leverage.Template.allBindings[c]=true; } return''; };\n" +
 
 
       // "var __bindFunc=function(binder, func, id){if!}"

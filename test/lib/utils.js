@@ -2,7 +2,7 @@
 
   describe('Leverage Utils', function() {
     var FullModule, SingleModule, User;
-    User = function() {};
+    User = Leverage.Model.extend({});
     FullModule = {
       instanceMethods: {
         instanceMethod: function() {}

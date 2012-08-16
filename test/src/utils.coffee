@@ -1,5 +1,6 @@
 describe 'Leverage Utils', ->
-  User = ->
+  # need to make sure it works with a leverage model
+  User = Leverage.Model.extend({})
   FullModule =
     instanceMethods: { instanceMethod: -> }
     classMethods:    { classMethod:    -> }
