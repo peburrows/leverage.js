@@ -1,3 +1,6 @@
+boundClass = (id, prop) ->
+  "data-bind-#{id}-#{prop}"
+
 describe 'Leverage.Template', ->
   beforeEach ->
     setFixtures('<div id="body"></div>');
@@ -19,10 +22,10 @@ describe 'Leverage.Template', ->
       describe 'for object properties', ->
         beforeEach ->
           @template = new Leverage.Template('{=> user.name <=}')
-          $('#body').append(@template(user: @user))
+          $('#body').html(@template(user: @user))
 
         it 'should the bound property in the proper tag with identifier', ->
-          expect($('#body').find(':first')).toHaveClass('data-bind-' + @user.id + '-name')
+          expect($('#body').find(':first')).toHaveClass(boundClass(@user.id, 'name'))
 
         it 'should update the text when the object property', ->
           @user.set('name', 'Jimmy')
@@ -31,11 +34,39 @@ describe 'Leverage.Template', ->
       describe 'for naked variables', ->
         beforeEach ->
           @template = new Leverage.Template( '{=> name <=}' )
-          $('#body').append(@template(@user))
+          $('#body').html(@template(@user))
 
         it 'should wrap the bound variable in the proper tag with identifier', ->
-          expect($('#body').find(':first')).toHaveClass('data-bind-' + @user.id + '-name')
+          expect($('#body').find(':first')).toHaveClass(boundClass(@user.id, 'name'))
 
         it 'should update the text when the variable changes', ->
           @user.set('name', 'Jimmy')
           expect($('#body').text()).toEqual('Jimmy')
+
+      describe 'for bound functions', ->
+        beforeEach ->
+          fullName = -> "#{@firstName} #{@lastName}"
+          User = Leverage.Model.extend {
+            firstName : 'Phil'
+            lastName  : 'Burrows'
+            fullName  : fullName.boundTo('firstName', 'lastName')
+          }
+
+          @user = new User
+          console.log('the user', @user)
+          @template = new Leverage.Template( '{=> user.fullName() <=}' )
+          $('#body').html(@template(user:@user))
+
+        it 'should wrap the bound function in the proper tag with identifier', ->
+          expect($('#body > :first')).toHaveClass(boundClass(@user.id, 'fullName'))
+
+        it 'should, of course, render the proper text', ->
+          expect($('#body').text()).toEqual(@user.fullName())
+
+        it 'should update the text when either variable changes', ->
+          @user.set('firstName', 'P.')
+          expect($('#body').text()).toEqual(@user.fullName())
+          @user.set('lastName', 'B.')
+          expect($('#body').text()).toEqual(@user.fullName())
+
+
