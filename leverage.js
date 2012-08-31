@@ -1,22 +1,24 @@
+/*! Leverage.js - v0.0.1 - 2012-08-31
+* Copyright (c) 2012 Phil Burrows; Licensed MIT */
 
 (function(){
-  var Leverage = {}
+  var Leverage = {};
 
   Leverage.noop = function(){};
   Leverage.bind = function(fn, obj){ return function(){ return fn.apply(obj, arguments); }; };
 
   Leverage.bindLeverageFunctions = function(obj){
     // var l = obj._leverage;
-    for(fn in obj){
+    for(var fn in obj){
       if( (/^_leverage/).test(fn) && [fn].apply ){
         console.log('binding: ' + fn);
-        l[fn] = Leverage.bind(l[fn], obj);
+        obj[fn] = Leverage.bind(obj[fn], obj);
       }
     }
   };
 
   this.Leverage = Leverage;
-}).call(this);
+}.call(this));
 ;(function(){
   Function.prototype.include = function(){
     for (var i = 0; i < arguments.length; i++){
@@ -51,7 +53,7 @@
     newFunc.__boundProperties = Array.prototype.slice.call(arguments, 0);
     return newFunc;
   };
-}).call(this);
+}.call(this));
 (function(){
   // I think we might want to change the errors array to a hash at some point
   var Errors = function(errors){ this.errors = errors || []; };
@@ -73,10 +75,10 @@
 
       validate: function(){
         this._leverageErrors = new Errors();
-        this._leverageValidations
+        this._leverageValidations = this._leverageValidations || {};
         var v = this._leverageValidations;
 
-        for(validation in v){
+        for(var validation in v){
           for (var i = v[validation].length - 1; i >= 0; i--) {
             v[validation][i].call(this);
           }
@@ -102,9 +104,9 @@
       },
 
       __clearValidations: function(){
-        this.prototype._leverageValidations = {}
+        this.prototype._leverageValidations = {};
       }
-    },
+    }
   };
 
   var validation = function(attr, msg, fn){
@@ -116,7 +118,7 @@
   };
 
   this.Leverage.Validations = Validations;
-}).call(this);
+}.call(this));
 (function(){
   var Callbacks = {
     classMethods : {
@@ -140,7 +142,7 @@
   };
 
   this.Leverage.Callbacks = Callbacks;
-}).call(this);
+}.call(this));
 ;(function(){
   var Events = {
     instanceMethods: {
@@ -153,13 +155,13 @@
 
       initialize: function(){
         var self = this;
-        for(prop in this){
+        for(var prop in this){
           if(typeof this[prop] !== 'undefined' && this[prop].__boundProperties){
             for (var i = this[prop].__boundProperties.length - 1; i >= 0; i--) {
               this.bind('change:'+this[prop].__boundProperties[i], function(e, data){
                 self.trigger('change:'+prop);
               });
-            };
+            }
           }
         }
       },
@@ -167,7 +169,7 @@
       isBound: function(name, callback){
         for (var i = this._bindings.length - 1; i >= 0; i--) {
           if(this._bindings[i] === callback){ return true; }
-        };
+        }
         return false;
       },
 
@@ -177,7 +179,7 @@
           var len = callbacks.length;
           for (var i = 0; i < len; i++) {
             callbacks[i].call(this, data);
-          };
+          }
         }
         return this;
       }
@@ -188,7 +190,7 @@
   Events.fire = Events.trigger;
 
   this.Leverage.Events = Events;
-}).call(this);
+}.call(this));
 (function(){
   var Class = function(){
     if(typeof this.__initialize !== 'undefined'){
@@ -200,7 +202,7 @@
 
   Class.prototype.initialize = function(attrs){
     if(typeof attrs === 'object'){
-      for(key in attrs){ this[key] = attrs[key]; }
+      for(var key in attrs){ this[key] = attrs[key]; }
     }
   };
 
@@ -209,15 +211,15 @@
       , parent = this;
 
     // automatically call the parent's initialize method
-    child = function(){ parent.apply(this, arguments); }
+    child = function(){ parent.apply(this, arguments); };
 
     _.extend(child, parent);
-    var noop = function(){ this.constructor = child; };
-    noop.prototype = parent.prototype;
-    child.prototype = new noop;
+    var Noop = function(){ this.constructor = child; };
+    Noop.prototype = parent.prototype;
+    child.prototype = new Noop();
 
-    if(instanceProps) _.extend(child.prototype, instanceProps);
-    if(classProps)    _.extend(child, classProps);
+    if(instanceProps){ _.extend(child.prototype, instanceProps); }
+    if(classProps)   { _.extend(child, classProps); }
 
     child.__super = parent.prototype;
 
@@ -225,14 +227,14 @@
   };
 
   this.Leverage.Class = Class;
-}).call(this);
+}.call(this));
 (function(){
   var Controller = Leverage.Class.extend({
     initialize: function(){
       var self = this;
       this.events = this.events || {};
       if(this.el){
-        for(key in this.events){
+        for(var key in this.events){
           var parts   = key.split(/\s+/)
             , handler = this[this.events[key]];
 
@@ -245,7 +247,7 @@
   });
 
   this.Leverage.Controller = Controller;
-}).call(this);
+}.call(this));
 (function(){
   var guid = function() {
     var S4 = function() {
@@ -255,7 +257,7 @@
   };
 
   var setupBindings = function(obj){
-    for(prop in obj){
+    for(var prop in obj){
       if(obj[prop].__boundProperties){
         for (var i = obj[prop].__boundProperties.length - 1; i >= 0; i--) {
           var e = 'change:' + obj[prop].__boundProperties[i]
@@ -263,7 +265,7 @@
           obj.bind(e , function(){
             obj.trigger(t);
           });
-        };
+        }
       }
     }
   };
@@ -276,9 +278,9 @@
     },
 
     set: function(attr, val, shouldTrigger){
-      if(shouldTrigger == null) shouldTrigger = true;
+      if(shouldTrigger == null){ shouldTrigger = true; }
       this[attr] = val;
-      if(shouldTrigger) this.trigger('change:' + attr, val);
+      if(shouldTrigger){ this.trigger('change:' + attr, val); }
     }
   });
 
@@ -287,7 +289,7 @@
   Model.include(Leverage.Callbacks);
 
   this.Leverage.Model = Model;
-}).call(this);
+}.call(this));
 ;(function(){
   /*
     This templating stuff is ripped straight from Underscore.js
@@ -311,7 +313,7 @@
     'u2029': '\u2029'
   };
 
-  for (var p in escapes) escapes[escapes[p]] = p;
+  for (var p in escapes){ escapes[escapes[p]] = p; }
   var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
   var unescaper = /\\(\\|'|r|n|t|u2028|u2029)/g;
 
@@ -334,8 +336,8 @@
         return '\\' + escapes[match];
       })
       .replace(settings.bind || noMatch, function(match, code){
-        var code  = unescape(code).replace(/^\s+|\s+$/g, '')
-          , parts = code.split('.')
+        code  = unescape(code).replace(/^\s+|\s+$/g, '');
+        var parts = code.split('.')
           , val   = parts[parts.length-1]
           , obj;
 
@@ -372,7 +374,7 @@
       }) + "';\n";
 
     // If a variable is not specified, place data values in local scope.
-    if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
+    if (!settings.variable){ source = 'with(obj||{}){\n' + source + '}\n'; }
 
     source = "var __p='';" +
       "var print=function(){__p+=Array.prototype.join.call(arguments, '')};\n" +
@@ -384,7 +386,7 @@
       source + "return __p;\n";
 
     var render = new Function(settings.variable || 'obj', '_', source);
-    if (data) return render(data, _);
+    if (data){ return render(data, _); }
     var template = function(data) {
       return render.call(this, data, _);
     };
@@ -407,4 +409,4 @@
   Template.allBindings = {};
 
   this.Leverage.Template = Template;
-}).call(this);
+}.call(this));
