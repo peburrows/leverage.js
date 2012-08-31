@@ -184,6 +184,9 @@
     }
   };
 
+  // alias 'trigger' as 'fire'
+  Events.fire = Events.trigger;
+
   this.Leverage.Events = Events;
 }).call(this);
 ;(function(){
