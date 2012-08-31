@@ -151,7 +151,7 @@
         return this;
       },
 
-      init: function(){
+      initialize: function(){
         var self = this;
         for(prop in this){
           if(typeof this[prop] !== 'undefined' && this[prop].__boundProperties){
@@ -204,17 +204,17 @@
     var child
       , parent = this;
 
+    // automatically call the parent's initialize method
     child = function(){ parent.apply(this, arguments); }
 
     _.extend(child, parent);
-    var noop = function(){};
+    var noop = function(){ this.constructor = child; };
     noop.prototype = parent.prototype;
     child.prototype = new noop;
 
     if(instanceProps) _.extend(child.prototype, instanceProps);
     if(classProps)    _.extend(child, classProps);
 
-    child.prototype.constructor = child;
     child.__super = parent.prototype;
 
     return child;
