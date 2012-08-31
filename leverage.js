@@ -189,7 +189,7 @@
 
   this.Leverage.Events = Events;
 }).call(this);
-;(function(){
+(function(){
   var Class = function(){
     if(typeof this.__initialize !== 'undefined'){
       // for internal initialization that shouldn't be overwritten
@@ -198,7 +198,11 @@
     this.initialize.apply(this, arguments);
   };
 
-  Class.prototype.initialize = function(){};
+  Class.prototype.initialize = function(attrs){
+    if(typeof attrs === 'object'){
+      for(key in attrs){ this[key] = attrs[key]; }
+    }
+  };
 
   Class.extend = function(instanceProps, classProps){
     var child
@@ -221,6 +225,26 @@
   };
 
   this.Leverage.Class = Class;
+}).call(this);
+(function(){
+  var Controller = Leverage.Class.extend({
+    initialize: function(){
+      var self = this;
+      this.events = this.events || {};
+      if(this.el){
+        for(key in this.events){
+          var parts   = key.split(/\s+/)
+            , handler = this[this.events[key]];
+
+          this.el.delegate(parts[0], parts[1], function(e){
+            handler.call(self, e, this);
+          });
+        }
+      }
+    }
+  });
+
+  this.Leverage.Controller = Controller;
 }).call(this);
 (function(){
   var guid = function() {
