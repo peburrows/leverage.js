@@ -53,14 +53,18 @@
   };
 }).call(this);
 (function(){
+  // I think we might want to change the errors array to a hash at some point
   var Errors = function(errors){ this.errors = errors || []; };
 
   Errors.prototype.blank = function(){ return this.errors.length === 0; };
-  Errors.prototype.add   = function(attr, msg){ this.errors.push(attr, msg); };
+  Errors.prototype.add   = function(attr, msg){ this.errors.push({attribute: attr, message: msg}); };
 
   var Validations = {
     instanceMethods: {
-      getErrors : function(){ return this._leverageErrors; },
+      getErrors : function(){
+        this._leverageErrors = this._leverageErrors || new Errors();
+        return this._leverageErrors;
+      },
 
       isValid: function(){
         this.validate();
@@ -68,7 +72,8 @@
       },
 
       validate: function(){
-        this._leverageErrors = new Errors;
+        this._leverageErrors = new Errors();
+        this._leverageValidations
         var v = this._leverageValidations;
 
         for(validation in v){
@@ -78,9 +83,6 @@
         }
       },
 
-      // have these a seperate properties so _.extend doesn't overwrite the whole _leverage object
-      _leverageErrors       : new Errors,
-      _leverageValidations  : {},
       _leverageAddError     : function(attr, error){ this.getErrors().add(attr, error); }
     },
 
@@ -95,13 +97,18 @@
       validatesLengthOf: function(attr, len, msg){
         msg = msg || 'must be at least ' + len + ' characters in length';
         validation.call(this, attr, msg, function(){
-          return (this[attr] && this[attr].length < len);
+          return (!this[attr] || this[attr].length < len);
         });
+      },
+
+      __clearValidations: function(){
+        this.prototype._leverageValidations = {}
       }
-    }
+    },
   };
 
   var validation = function(attr, msg, fn){
+    this.prototype._leverageValidations = this.prototype._leverageValidations || {};
     this.prototype._leverageValidations[attr] = this.prototype._leverageValidations[attr] || [];
     this.prototype._leverageValidations[attr].push(function(){
       if(fn.call(this)){ this._leverageAddError(attr, msg); }
@@ -197,8 +204,9 @@
     child = function(){ parent.apply(this, arguments); }
 
     _.extend(child, parent);
-    Leverage.noop.prototype = parent.prototype;
-    child.prototype = new Leverage.noop;
+    var noop = function(){};
+    noop.prototype = parent.prototype;
+    child.prototype = new noop;
 
     if(instanceProps) _.extend(child.prototype, instanceProps);
     if(classProps)    _.extend(child, classProps);
