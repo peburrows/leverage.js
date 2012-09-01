@@ -17,10 +17,6 @@ Router
 
   // resources
   .resources('users', {
-    // originally, I called the handler in the context of the request 
-    // (i.e. `this` within the handler referred to the request),
-    // but I think it might make more sense to pass the request as a param
-    // in order to maintain the expected context within the handler (probably a controller)
     show:   function(request){ UserController.show(request.params.id, request); },
     index:  function(request){ UserController.index(request); },
     search: function(request){ UserController.search(request.params.q, request); },
