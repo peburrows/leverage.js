@@ -6,8 +6,8 @@ describe 'Router', ->
 
   describe 'vanilla routes', ->
     path = '/hello/world'
-    h = handler: -> console.log("handler called", this)
-    router.define(path, h.handler)
+    handler = ->
+    router.define(path, handler)
 
     it 'should add the proper number of routes', ->
       expect(router.routes().length).toEqual(1)
@@ -16,7 +16,7 @@ describe 'Router', ->
       expect(router.findRoute(path)).toEqual(jasmine.any(Object))
 
     it 'should return the proper handler', ->
-      expect(router.findRoute(path).handler).toEqual(h.handler)
+      expect(router.findRoute(path).handler).toEqual(handler)
 
     it 'should properly call the handler when asked to navigate, but only once', ->
       route = router.findRoute(path)

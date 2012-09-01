@@ -9,14 +9,10 @@
       return expect(router.goTo).toEqual(router.navigate);
     });
     describe('vanilla routes', function() {
-      var h, path;
+      var handler, path;
       path = '/hello/world';
-      h = {
-        handler: function() {
-          return console.log("handler called", this);
-        }
-      };
-      router.define(path, h.handler);
+      handler = function() {};
+      router.define(path, handler);
       it('should add the proper number of routes', function() {
         return expect(router.routes().length).toEqual(1);
       });
@@ -24,7 +20,7 @@
         return expect(router.findRoute(path)).toEqual(jasmine.any(Object));
       });
       it('should return the proper handler', function() {
-        return expect(router.findRoute(path).handler).toEqual(h.handler);
+        return expect(router.findRoute(path).handler).toEqual(handler);
       });
       return it('should properly call the handler when asked to navigate, but only once', function() {
         var route;
