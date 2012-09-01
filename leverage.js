@@ -54,6 +54,7 @@
     return newFunc;
   };
 }.call(this));
+
 (function(){
   // I think we might want to change the errors array to a hash at some point
   var Errors = function(errors){ this.errors = errors || []; };
@@ -119,6 +120,7 @@
 
   this.Leverage.Validations = Validations;
 }.call(this));
+
 (function(){
   var Callbacks = {
     classMethods : {
@@ -191,6 +193,7 @@
 
   this.Leverage.Events = Events;
 }.call(this));
+
 (function(){
   var Class = function(){
     if(typeof this.__initialize !== 'undefined'){
@@ -228,6 +231,7 @@
 
   this.Leverage.Class = Class;
 }.call(this));
+
 (function(){
   var Controller = Leverage.Class.extend({
     initialize: function(){
@@ -248,6 +252,7 @@
 
   this.Leverage.Controller = Controller;
 }.call(this));
+
 (function(){
   var guid = function() {
     var S4 = function() {
@@ -290,6 +295,7 @@
 
   this.Leverage.Model = Model;
 }.call(this));
+
 (function() {
   var ref
     , hasPushState = ((ref = window.history) != null ? ref.pushState : void 0) != null;
@@ -523,6 +529,7 @@
   Router.extend(Leverage.Events);
   this.Leverage.Router = Router;
 }.call(this));
+
 ;(function(){
   /*
     This templating stuff is ripped straight from Underscore.js
