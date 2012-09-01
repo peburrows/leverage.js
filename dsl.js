@@ -17,9 +17,13 @@ Router
 
   // resources
   .resources('users', {
-    show:   function(){ UserController.show(this.params.id, this); },
-    index:  function(){ UserController.index(this); },
-    search: function(){ UserController.search(this.params.q, this); },
+    // originally, I called the handler in the context of the request 
+    // (i.e. `this` within the handler referred to the request),
+    // but I think it might make more sense to pass the request as a param
+    // in order to maintain the expected context within the handler (probably a controller)
+    show:   function(request){ UserController.show(request.params.id, request); },
+    index:  function(request){ UserController.index(request); },
+    search: function(request){ UserController.search(request.params.q, request); },
   })
 
   // alternatively, we could just pass the UserController to the resource definition
