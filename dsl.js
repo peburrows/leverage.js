@@ -10,7 +10,6 @@ var UserController = new Leverage.Controller.extend({
 var Router = new Leverage.Router({pushState: true})
 
 Router
-  // an explicit route
   .define('/hello/world', function(){
     HelloController.show();
   })
