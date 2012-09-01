@@ -1,4 +1,4 @@
-/*! Leverage.js - v0.0.1 - 2012-08-31
+/*! Leverage.js - v0.0.1 - 2012-09-01
 * Copyright (c) 2012 Phil Burrows; Licensed MIT */
 
 (function(){
@@ -19,6 +19,7 @@
 
   this.Leverage = Leverage;
 }.call(this));
+
 (function(){
   Function.prototype.include = function(){
     for (var i = 0; i < arguments.length; i++){
@@ -304,10 +305,10 @@
   var URL = function(url){
     var a = document.createElement('a');
     a.href = url;
-    this.url = a;
-    this.queryString = this.url.search.replace(/^\?/, '');
-    this.hash        = this.url.hash.replace(/^#/, '');
-    this.path        = this.url.pathname;
+    // this.url = url;
+    this.queryString = a.search.replace(/^\?/, '');
+    this.hash        = a.hash.replace(/^#/, '');
+    this.path        = a.pathname;
 
     this.fullPathWithoutHash = this.path + (this.queryString.length > 0 ? ('?'+this.queryString) : '');
 
@@ -367,8 +368,7 @@
       , test:      false
     }, options);
 
-    this.options = options;
-    this.usePushState = options.pushState && hasPushState;
+    this.usePushState = this.options.pushState && hasPushState;
 
     var self    = this
       , router  = self;
@@ -406,9 +406,12 @@
 
     this.handleUrlChange = function(url){
       if(this.usePushState){
-        this.createRequest( new URL(url || document.location).fullPath );
+        if(url == null){ url = document.location; }
+        this.createRequest( new URL(url).fullPath );
       }else{
-        this.createRequest( new URL(url || document.location).hash );
+        var parsed = new URL(url || document.location)
+          , path   = (url == null ? parsed.hash : parsed.fullPathWithoutHash )
+        this.createRequest( path );
       }
     };
 
@@ -509,15 +512,16 @@
 
     resource = '/' + resource;
     for(var action in handlers){
-      if(/show/.test(action)){
+      // I think we can just check for equality instead of using a regexp
+      if(action === 'show'){
         self.define(resource + '/:id', handlers[action]);
-      }else if(/index/.test(action)){
+      }else if(action === 'index'){
         self.define(resource, handlers[action]);
-      }else if(/edit/.test(action)){
+      }else if(action === 'edit'){
         self.define(resource + '/:id/edit', handlers[action]);
-      }else if(/update/.test(action)){
+      }else if(action === 'update'){
         self.define(resource + '/:id/update', handlers[action]);
-      }else if(/delete/.test(action)){
+      }else if(action === 'delete'){
         self.define(resource + '/:id/delete', handlers[action]);
       }
     }
