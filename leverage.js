@@ -353,7 +353,8 @@
     this.perform  = function(){
       if(route){
         router.trigger('request:before');
-        route.handler.call(this);
+        // route.handler.call(this);
+        route.handler(this);
         router.trigger('request');
       }
     };
@@ -496,7 +497,10 @@
     return this;
   };
 
-  Router.prototype.resources = function(resource, handlers){
+  Router.prototype.resources = function(resource, handlers, options){
+    // thinking this will eventually allow us to specify things like:
+    // {collection: {'search': UserController.search} }
+    if(options == null){ options = {}; }
     var self = this;
 
     if((/\//).test(resource)){

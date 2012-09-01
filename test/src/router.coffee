@@ -1,6 +1,6 @@
 describe 'Router', ->
   router = new Leverage.Router(test: true)
-  console.log("does this router use pushState: ", router.usePushState, router.options)
+
   it 'should properly alias goTo as navigate', ->
     expect(router.goTo).toEqual(router.navigate)
 
