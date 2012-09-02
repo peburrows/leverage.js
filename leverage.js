@@ -238,6 +238,7 @@
     initialize: function(){
       var self = this;
       this.events = this.events || {};
+      // we should possibly delegate these via the doc if this.el isn't set
       if(this.el){
         for(var key in this.events){
           var parts   = key.split(/\s+/)
