@@ -4,7 +4,7 @@
     beforeEach(function() {
       return setFixtures('<div id="el"><a href="">link</a></div>');
     });
-    return describe('event handling', function() {
+    describe('event handling', function() {
       var clickHandler, handlerCalled;
       handlerCalled = false;
       clickHandler = function() {
@@ -25,6 +25,15 @@
         $('#el a').click();
         return expect(handlerCalled).toEqual(true);
       });
+    });
+    return it('should allow you to set the element html', function() {
+      var C, controller;
+      C = Leverage.Controller.extend({
+        el: $('#el')
+      });
+      controller = new C;
+      controller.html('things');
+      return expect($('#el').html()).toEqual('things');
     });
   });
 
