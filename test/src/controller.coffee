@@ -5,11 +5,13 @@ describe 'Controller', ->
   describe 'event handling', ->
     handlerCalled = false
     clickHandler = -> handlerCalled = true
-    beforeEach ->
-      Controller = Leverage.Controller.extend
-                              el:     $('#el')
+    controller = null
+    Controller = Leverage.Controller.extend
+                              el:     '#el'
                               events: 'a click': 'aClick'
                               aClick: clickHandler
+
+    beforeEach ->
       controller = new Controller
 
     it 'should properly call event handlers', ->
@@ -17,9 +19,7 @@ describe 'Controller', ->
       # can't seem to get spyOn to work with these handlers
       expect(handlerCalled).toEqual(true)
 
-  it 'should allow you to set the element html', ->
-    C = Leverage.Controller.extend(el: $('#el'))
-    controller = new C
-    controller.html('things')
-    expect($('#el').html()).toEqual('things')
+    it 'should allow you to set the element html', ->
+      controller.html('things')
+      expect($('#el').html()).toEqual('things')
 
