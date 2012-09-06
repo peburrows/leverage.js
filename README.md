@@ -1,3 +1,3 @@
 # Leverage.js
 
-A MVC javascript framework.
+An MVC javascript framework.
