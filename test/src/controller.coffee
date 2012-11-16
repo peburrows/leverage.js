@@ -8,14 +8,16 @@ describe 'Controller', ->
     controller = null
     Controller = Leverage.Controller.extend
                               el:     '#el'
-                              events: 'a click': 'aClick'
+                              events: 'a click': ['aClick', 'bClick']
                               aClick: clickHandler
+                              bClick: -> return
 
     beforeEach ->
       controller = new Controller
+      window.controller = controller
 
     it 'should set up the handlers properly', ->
-      expect(controller.__handlers['a click'].length).toEqual(1)
+      expect(controller.__handlers['a click'].length).toEqual(2)
 
     it 'should properly call event handlers', ->
       $('#el a').click()

@@ -13,15 +13,17 @@ describe('Controller', function() {
     Controller = Leverage.Controller.extend({
       el: '#el',
       events: {
-        'a click': 'aClick'
+        'a click': ['aClick', 'bClick']
       },
-      aClick: clickHandler
+      aClick: clickHandler,
+      bClick: function() {}
     });
     beforeEach(function() {
-      return controller = new Controller;
+      controller = new Controller;
+      return window.controller = controller;
     });
     it('should set up the handlers properly', function() {
-      return expect(controller.__handlers['a click'].length).toEqual(1);
+      return expect(controller.__handlers['a click'].length).toEqual(2);
     });
     it('should properly call event handlers', function() {
       $('#el a').click();
