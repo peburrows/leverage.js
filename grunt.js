@@ -1,11 +1,14 @@
 /*global module:false*/
+
+var packageInfo = require('package.json');
+
 module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-coffee');
 
   // Project configuration.
   grunt.initConfig({
     meta: {
-      version: '0.0.1',
+      version: packageInfo.version,
       banner: '/*! Leverage.js - v<%= meta.version %> - ' +
         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
         '* Copyright (c) <%= grunt.template.today("yyyy") %> ' +
