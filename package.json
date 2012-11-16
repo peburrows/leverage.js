@@ -1,0 +1,25 @@
+{
+  "name": "leverage",
+  "version": "0.0.1",
+  "description": "Javascript MVC framework",
+  "main": "leverage.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "grunt-coffee": "~0.0.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/peburrows/leverage.js.git"
+  },
+  "keywords": [
+    "leverage",
+    "mvc"
+  ],
+  "author": "Phil Burrows",
+  "license": "BSD"
+}

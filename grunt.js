@@ -1,5 +1,6 @@
 /*global module:false*/
 module.exports = function(grunt) {
+  grunt.loadNpmTasks('grunt-coffee');
 
   // Project configuration.
   grunt.initConfig({
@@ -12,6 +13,18 @@ module.exports = function(grunt) {
     },
     lint: {
       files: ['grunt.js', 'lib/**/*.js']
+    },
+
+    coffee: {
+      app: {
+        src: ['src/**/*.coffee'],
+        dest: 'lib'
+      },
+
+      tests: {
+        src: ['test/src/**/*.coffee'],
+        dest: 'test/lib'
+      }
     },
 
     concat: {
@@ -27,6 +40,10 @@ module.exports = function(grunt) {
       }
     },
     watch: {
+      tests: {
+        files: 'test/src/**/*.coffee',
+        tasks: 'coffee:tests'
+      },
       files: '<config:lint.files>',
       tasks: 'lint'
     },
