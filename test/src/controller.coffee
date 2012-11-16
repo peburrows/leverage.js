@@ -14,6 +14,9 @@ describe 'Controller', ->
     beforeEach ->
       controller = new Controller
 
+    # it 'should set up the handlers properly', ->
+    #   expect(Controller.__handlers['a click'].length).toEqual(1)
+
     it 'should properly call event handlers', ->
       $('#el a').click()
       # can't seem to get spyOn to work with these handlers
