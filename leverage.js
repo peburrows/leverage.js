@@ -238,6 +238,7 @@
     initialize: function(){
       var self = this;
       this.events = this.events || {};
+      this.__handlers = {};
       // we should possibly delegate these via the doc if this.el isn't set
       if(this.el){
         if(typeof this.el === 'string'){ this.el = $(this.el); }
@@ -245,6 +246,11 @@
           var parts   = key.split(/\s+/)
             , handler = this[this.events[key]];
 
+          // just store a copy of the handlers for reference (and testing)
+          this.__handlers[key] = this.__handlers[key] || [];
+          this.__handlers[key].push(handler);
+
+          console.log(this.__handlers)
           this.el.delegate(parts[0], parts[1], function(e){
             // pass the event and element to the handler
             handler.call(self, e, this);

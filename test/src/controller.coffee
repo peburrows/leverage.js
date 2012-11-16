@@ -12,10 +12,11 @@ describe 'Controller', ->
                               aClick: clickHandler
 
     beforeEach ->
+      console.log("gonna create the controller here")
       controller = new Controller
 
-    # it 'should set up the handlers properly', ->
-    #   expect(Controller.__handlers['a click'].length).toEqual(1)
+    it 'should set up the handlers properly', ->
+      expect(controller.__handlers['a click'].length).toEqual(1)
 
     it 'should properly call event handlers', ->
       $('#el a').click()

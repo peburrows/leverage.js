@@ -18,7 +18,11 @@ describe('Controller', function() {
       aClick: clickHandler
     });
     beforeEach(function() {
+      console.log("gonna create the controller here");
       return controller = new Controller;
+    });
+    it('should set up the handlers properly', function() {
+      return expect(controller.__handlers['a click'].length).toEqual(1);
     });
     it('should properly call event handlers', function() {
       $('#el a').click();
