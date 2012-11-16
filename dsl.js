@@ -35,3 +35,12 @@ Router
     UserController.catchAll(this)
   })
   .setDefault('/hello/world');
+
+
+// setting up data binding...
+var User = Leverage.Model.extend({
+  fullName: function(){
+    // you could actually just pull the attrs directly via this.firstName and this.lastName
+    return this.get('firstName') + ' ' + this.get('lastName');
+  }.boundTo('firstName', 'lastName')
+});
