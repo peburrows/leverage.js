@@ -18,7 +18,6 @@ describe('Controller', function() {
       aClick: clickHandler
     });
     beforeEach(function() {
-      console.log("gonna create the controller here");
       return controller = new Controller;
     });
     it('should set up the handlers properly', function() {

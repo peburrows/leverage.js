@@ -12,7 +12,6 @@ describe 'Controller', ->
                               aClick: clickHandler
 
     beforeEach ->
-      console.log("gonna create the controller here")
       controller = new Controller
 
     it 'should set up the handlers properly', ->
