@@ -1,4 +1,4 @@
-/*! Leverage.js - v0.0.1 - 2012-09-01
+/*! Leverage.js - v0.0.1 - 2012-11-16
 * Copyright (c) 2012 Phil Burrows; Licensed MIT */
 
 (function(){
@@ -240,7 +240,7 @@
       this.events = this.events || {};
       // we should possibly delegate these via the doc if this.el isn't set
       if(this.el){
-        if(typeof this.el === 'string') this.el = $(this.el)
+        if(typeof this.el === 'string'){ this.el = $(this.el); }
         for(var key in this.events){
           var parts   = key.split(/\s+/)
             , handler = this[this.events[key]];
@@ -254,7 +254,7 @@
     },
 
     html: function(data){
-      if(this.el) this.el.html(data);
+      if(this.el){ this.el.html(data); }
     }
   });
 
@@ -418,7 +418,7 @@
         this.createRequest( new URL(url).fullPath );
       }else{
         var parsed = new URL(url || document.location)
-          , path   = (url == null ? parsed.hash : parsed.fullPathWithoutHash )
+          , path   = (url == null ? parsed.hash : parsed.fullPathWithoutHash );
         this.createRequest( path );
       }
     };
