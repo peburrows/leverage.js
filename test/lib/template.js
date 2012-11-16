@@ -23,7 +23,7 @@ describe('Leverage.Template', function() {
         name: '<phil'
       })).toEqual('&lt;phil');
     });
-    return describe('that has bindings', function() {
+    describe('that has one way bindings', function() {
       beforeEach(function() {
         return this.user = new Leverage.Model({
           name: 'Phil'
@@ -86,6 +86,22 @@ describe('Leverage.Template', function() {
           this.user.set('lastName', 'B.');
           return expect($('#body').text()).toEqual(this.user.fullName());
         });
+      });
+    });
+    return describe('that has template --> model bindings', function() {
+      beforeEach(function() {
+        var User;
+        User = Leverage.Model.extend();
+        this.user = new User({
+          name: 'Phil'
+        });
+        this.template = new Leverage.Template('<input type="text" value="{<= user.name =>}">');
+        return $('#body').html(this.template({
+          user: this.user
+        }));
+      });
+      return it('should render the initial value in the template', function() {
+        return expect($('#body input').val()).toEqual('Phil');
       });
     });
   });

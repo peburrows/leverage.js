@@ -23,6 +23,16 @@
 (function(){
   Function.prototype.include = function(){
     for (var i = 0; i < arguments.length; i++){
+      // need to avoid overwriting the initialize method...
+      var oldInit = this.prototype.initialize
+        , argInit = arguments[i].initialize;
+
+      var newInit = function(){
+        if( argInit ){ argInit.apply(this, arguments); }
+        if( oldInit ){ oldInit.apply(this, arguments); }
+      };
+
+
       if(arguments[i].instanceMethods){
         _.extend(this.prototype, arguments[i].instanceMethods);
       }else{
@@ -30,6 +40,8 @@
       }
 
       if(arguments[i].classMethods){ _.extend(this, arguments[i].classMethods); }
+
+      this.prototype.initialize = newInit;
     }
     return this;
   };
@@ -316,6 +328,10 @@
       if(shouldTrigger == null){ shouldTrigger = true; }
       this[attr] = val;
       if(shouldTrigger){ this.trigger('change:' + attr, val); }
+    },
+
+    get: function(attr){
+      return this[attr];
     }
   });
 
@@ -640,6 +656,10 @@
             s += "'<span class=\"' + __className(" + obj + ",'" + val + "') + '\">'+(" + unescape(code) + ")+'</span>'+\n'";
         return s;
       })
+      .replace(settings.modelBind || noMatch, function(match, code){
+        // we're not yet doing anything except interpolating here
+        return "'+\n(" + unescape(code) + ")+\n'";
+      })
       .replace(settings.escape || noMatch, function(match, code) {
         return "'+\n_.escape(" + unescape(code) + ")+\n'";
       })
@@ -681,6 +701,8 @@
     , escape      : /\{==(.+?)==\}/g  // {== escape ==}
     , evaluate    : /\{%(.+?)%\}/g    // {% evaluate %}
     , bind        : /\{=>(.+?)<=\}/g  // {=> bind <=}
+    , modelBind   : /\{<=(.+?)=>\}/g  // {<= modelBind =>}
+    , twoWayBind  : /\{<=>(.+?)<=>\}/g  // {<=> twoWayBind <=>}
   };
 
   Template.allBindings = {};

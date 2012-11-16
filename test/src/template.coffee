@@ -15,7 +15,7 @@ describe 'Leverage.Template', ->
       template = new Leverage.Template( '{== name ==}' )
       expect(template(name: '<phil')).toEqual('&lt;phil')
 
-    describe 'that has bindings', ->
+    describe 'that has one way bindings', ->
       beforeEach ->
         @user = new Leverage.Model({name: 'Phil'})
 
@@ -67,5 +67,15 @@ describe 'Leverage.Template', ->
           expect($('#body').text()).toEqual(@user.fullName())
           @user.set('lastName', 'B.')
           expect($('#body').text()).toEqual(@user.fullName())
+
+    describe 'that has template --> model bindings', ->
+      beforeEach ->
+        User = Leverage.Model.extend()
+        @user = new User({name: 'Phil'})
+        @template = new Leverage.Template('<input type="text" value="{<= user.name =>}">')
+        $('#body').html(@template(user: @user))
+
+      it 'should render the initial value in the template', ->
+        expect( $('#body input').val() ).toEqual('Phil');
 
 

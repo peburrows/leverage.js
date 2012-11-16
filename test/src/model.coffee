@@ -12,6 +12,10 @@ describe 'Leverage.Model', ->
     it "should have an id assigned", ->
       expect(@user.id).toBeDefined()
 
+    it "should allow the getting of attributes", ->
+      @user.set('firstName', 'Phil')
+      expect(@user.get('firstName')).toEqual('Phil')
+
     it "should allow setting of attributes", ->
       @user.set('firstName', 'Phil')
       expect(@user.firstName).toEqual('Phil')

@@ -13,6 +13,10 @@ describe('Leverage.Model', function() {
     it("should have an id assigned", function() {
       return expect(this.user.id).toBeDefined();
     });
+    it("should allow the getting of attributes", function() {
+      this.user.set('firstName', 'Phil');
+      return expect(this.user.get('firstName')).toEqual('Phil');
+    });
     it("should allow setting of attributes", function() {
       this.user.set('firstName', 'Phil');
       return expect(this.user.firstName).toEqual('Phil');
