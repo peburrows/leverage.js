@@ -47,8 +47,10 @@ module.exports = function(grunt) {
         files: 'test/src/**/*.coffee',
         tasks: 'coffee:tests'
       },
-      files: '<config:lint.files>',
-      tasks: 'concat'
+      app: {
+        files: '<config:lint.files>',
+        tasks: 'concat'
+      }
     },
     jshint: {
       options: {
