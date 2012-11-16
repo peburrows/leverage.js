@@ -276,7 +276,7 @@
     },
 
     html: function(data){
-      if(this.el){ this.el.html(data); }
+      if(this.el){ return this.el.html(data); }
     }
   });
 
