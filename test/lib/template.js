@@ -59,16 +59,16 @@ describe('Leverage.Template', function() {
       });
       return describe('for bound functions', function() {
         beforeEach(function() {
-          var User, fullName;
+          var fullName;
           fullName = function() {
             return "" + this.firstName + " " + this.lastName;
           };
-          User = Leverage.Model.extend({
+          this.User = Leverage.Model.extend({
             firstName: 'Phil',
             lastName: 'Burrows',
             fullName: fullName.boundTo('firstName', 'lastName')
           });
-          this.user = new User;
+          this.user = new this.User;
           this.template = new Leverage.Template('{=> user.fullName() <=}');
           return $('#body').html(this.template({
             user: this.user
@@ -80,11 +80,33 @@ describe('Leverage.Template', function() {
         it('should, of course, render the proper text', function() {
           return expect($('#body').text()).toEqual(this.user.fullName());
         });
-        return it('should update the text when either variable changes', function() {
+        it('should update the text when either variable changes', function() {
           this.user.set('firstName', 'P.');
           expect($('#body').text()).toEqual(this.user.fullName());
           this.user.set('lastName', 'B.');
           return expect($('#body').text()).toEqual(this.user.fullName());
+        });
+        return describe('AND object properties', function() {
+          beforeEach(function() {
+            this.user2 = new this.User;
+            this.bothTemplate = new Leverage.Template('<span id="first">{=> user.firstName <=}</span><span id="full">{=> user.fullName() <=}</span>');
+            return $('#body').html(this.bothTemplate({
+              user: this.user2
+            }));
+          });
+          it('should update the property', function() {
+            this.user2.set('firstName', 'Jimmy');
+            return expect($('#first').text()).toEqual('Jimmy');
+          });
+          it('should update the bound function on property change', function() {
+            this.user2.set('firstName', 'Alex');
+            return expect($('#full').text()).toEqual(this.user2.fullName());
+          });
+          return it('should update both', function() {
+            this.user2.set('firstName', 'Geraldo');
+            expect($('#first').text()).toEqual('Geraldo');
+            return expect($('#full').text()).toEqual(this.user2.fullName());
+          });
         });
       });
     });

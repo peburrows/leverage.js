@@ -46,13 +46,13 @@ describe 'Leverage.Template', ->
       describe 'for bound functions', ->
         beforeEach ->
           fullName = -> "#{@firstName} #{@lastName}"
-          User = Leverage.Model.extend {
+          @User = Leverage.Model.extend {
             firstName : 'Phil'
             lastName  : 'Burrows'
             fullName  : fullName.boundTo('firstName', 'lastName')
           }
 
-          @user = new User
+          @user = new @User
           @template = new Leverage.Template( '{=> user.fullName() <=}' )
           $('#body').html(@template(user:@user))
 
@@ -67,6 +67,25 @@ describe 'Leverage.Template', ->
           expect($('#body').text()).toEqual(@user.fullName())
           @user.set('lastName', 'B.')
           expect($('#body').text()).toEqual(@user.fullName())
+
+        describe 'AND object properties', ->
+          beforeEach ->
+            @user2 = new @User
+            @bothTemplate = new Leverage.Template('<span id="first">{=> user.firstName <=}</span><span id="full">{=> user.fullName() <=}</span>')
+            $('#body').html( @bothTemplate(user: @user2) )
+
+          it 'should update the property', ->
+            @user2.set('firstName', 'Jimmy')
+            expect($('#first').text()).toEqual('Jimmy')
+
+          it 'should update the bound function on property change', ->
+            @user2.set('firstName', 'Alex')
+            expect($('#full').text()).toEqual(@user2.fullName())
+
+          it 'should update both', ->
+            @user2.set('firstName', 'Geraldo')
+            expect($('#first').text()).toEqual('Geraldo')
+            expect($('#full').text()).toEqual(@user2.fullName())
 
     describe 'that has template --> model bindings', ->
       it 'should render the initial value in the template', ->
