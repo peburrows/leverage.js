@@ -18,7 +18,7 @@
       });
 
       User.validatesPresenceOf('firstName');
-      User.validatesLengthOf('firstName', 2);
+      // User.validatesLengthOf('firstName', 2);
 
       User.include(Leverage.Callbacks);
       User.before('fullName', function(){

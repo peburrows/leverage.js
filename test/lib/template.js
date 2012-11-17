@@ -6,7 +6,16 @@ boundClass = function(id, prop) {
 
 describe('Leverage.Template', function() {
   beforeEach(function() {
-    return setFixtures('<div id="body"></div>');
+    var fullName;
+    setFixtures('<div id="body"></div>');
+    fullName = function() {
+      return "" + this.firstName + " " + this.lastName;
+    };
+    return this.User = Leverage.Model.extend({
+      firstName: 'Phil',
+      lastName: 'Burrows',
+      fullName: fullName.boundTo('firstName', 'lastName')
+    });
   });
   return describe('with the default settings', function() {
     it('should handle interpolation', function() {
@@ -23,7 +32,7 @@ describe('Leverage.Template', function() {
         name: '<phil'
       })).toEqual('&lt;phil');
     });
-    describe('that has one way bindings', function() {
+    describe('that has data way bindings', function() {
       beforeEach(function() {
         return this.user = new Leverage.Model({
           name: 'Phil'
@@ -59,15 +68,6 @@ describe('Leverage.Template', function() {
       });
       return describe('for bound functions', function() {
         beforeEach(function() {
-          var fullName;
-          fullName = function() {
-            return "" + this.firstName + " " + this.lastName;
-          };
-          this.User = Leverage.Model.extend({
-            firstName: 'Phil',
-            lastName: 'Burrows',
-            fullName: fullName.boundTo('firstName', 'lastName')
-          });
           this.user = new this.User;
           this.template = new Leverage.Template('{=> user.fullName() <=}');
           return $('#body').html(this.template({
@@ -108,6 +108,47 @@ describe('Leverage.Template', function() {
             return expect($('#full').text()).toEqual(this.user2.fullName());
           });
         });
+      });
+    });
+    describe('when dealing with multiple templates', function() {
+      beforeEach(function() {
+        this.user = new this.User;
+        this.templates = {
+          first: new Leverage.Template('<span id="first-1">{=> user.firstName <=}</span>'),
+          last: new Leverage.Template('<span id="last-1">{=> user.lastName <=}</span>'),
+          full: new Leverage.Template('<span id="full-1">{=> user.fullName() <=}</span>'),
+          all: new Leverage.Template('<span id="first-2">{=> user.firstName <=}</span><span id="last-2">{=> user.lastName <=}</span><span id="full-2">{=> user.fullName() <=}</span>')
+        };
+        return $('#body').html(this.templates.first({
+          user: this.user
+        }) + this.templates.last({
+          user: this.user
+        }) + this.templates.full({
+          user: this.user
+        }) + this.templates.all({
+          user: this.user
+        }));
+      });
+      it('should update all templates with bound properties', function() {
+        this.user.set('firstName', 'Bro');
+        expect(this.user.firstName).toEqual('Bro');
+        expect($('#first-1').text()).toEqual(this.user.firstName);
+        return expect($('#first-2').text()).toEqual(this.user.firstName);
+      });
+      it('should update all templates with bound functions', function() {
+        this.user.set('lastName', 'Dude');
+        expect(this.user.lastName).toEqual('Dude');
+        expect($('#full-1').text()).toEqual(this.user.fullName());
+        return expect($('#full-1').text()).toEqual($('#full-2').text());
+      });
+      return it('should update *all* bound properties and functions', function() {
+        this.user.set('firstName', 'Jimmy').set('lastName', 'Allen');
+        expect($('#first-1').text()).toEqual(this.user.firstName);
+        expect($('#first-2').text()).toEqual(this.user.firstName);
+        expect($('#last-1').text()).toEqual(this.user.lastName);
+        expect($('#last-2').text()).toEqual(this.user.lastName);
+        expect($('#full-1').text()).toEqual(this.user.fullName());
+        return expect($('#full-2').text()).toEqual(this.user.fullName());
       });
     });
     return describe('that has template --> model bindings', function() {

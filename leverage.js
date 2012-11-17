@@ -328,6 +328,7 @@
       if(shouldTrigger == null){ shouldTrigger = true; }
       this[attr] = val;
       if(shouldTrigger){ this.trigger('change:' + attr, val); }
+      return this;
     },
 
     get: function(attr){
