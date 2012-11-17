@@ -27,7 +27,8 @@ describe('Leverage.Model', function() {
     });
     return it("should fire change events on bound functions when props are changed", function() {
       this.user.set('firstName', 'Phil');
-      return expect(this.user.trigger).toHaveBeenCalledWith('change:fullName');
+      expect(this.user.trigger).toHaveBeenCalledWith('change:fullName');
+      return expect(this.user.trigger).toHaveBeenCalledWith('change:firstName', 'Phil');
     });
   });
 });

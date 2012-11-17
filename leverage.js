@@ -1,4 +1,4 @@
-/*! Leverage.js - v0.0.1 - 2012-11-16
+/*! Leverage.js - v0.0.1 - 2012-11-17
 * Copyright (c) 2012 Phil Burrows; Licensed MIT */
 
 (function(){
@@ -618,6 +618,32 @@
     });
   };
 
+  var extractValueAndObject = function(code, settings){
+    code  = unescape(code).replace(/^\s+|\s+$/g, '');
+    var parts = code.split('.')
+      , val   = parts[parts.length-1]
+      , obj;
+
+    if(parts.length === 1){ obj = settings.variable || 'obj'; }
+    else{
+      if(parts.length > 2){
+        obj = parts.slice(0, parts.length-2).join('.');
+      }else{
+        obj = parts[0];
+      }
+    }
+
+    var isFunc = false
+      , funcReg= /\(\)\s*$/;
+
+    if(funcReg.test(val)){
+      isFunc  =true;
+      val     = val.replace(funcReg, '');
+    }
+
+    return {obj: obj, val: val, isFunc: isFunc, code: code};
+  };
+
   var Template = function(text, data, settings){
     settings = _.defaults(settings || {}, Template.settings);
 
@@ -629,36 +655,18 @@
         return '\\' + escapes[match];
       })
       .replace(settings.bind || noMatch, function(match, code){
-        code  = unescape(code).replace(/^\s+|\s+$/g, '');
-        var parts = code.split('.')
-          , val   = parts[parts.length-1]
-          , obj;
+        var ret = extractValueAndObject(code, settings);
 
-
-          // if we only have an attribute, just set the object to the 'obj' variable that's
-          if(parts.length === 1){ obj = settings.variable || 'obj'; }
-          else{
-            if(parts.length > 2){
-              obj = parts.slice(0, parts.length-2).join('.');
-            }else{
-              obj = parts[0];
-            }
-          }
-
-          var isFunc = false
-            , funcReg= /\(\)\s*$/;
-          if(funcReg.test(val)){
-            isFunc  =true;
-            val     = val.replace(funcReg, '');
-          }
-
-        var s  = "'+\n__bind(" + obj + ", '" + val + "'," + isFunc + ")+\n";
-            s += "'<span class=\"' + __className(" + obj + ",'" + val + "') + '\">'+(" + unescape(code) + ")+'</span>'+\n'";
+        var s  = "'+\n__bind(" + ret.obj + ", '" + ret.val + "'," + ret.isFunc + ")+\n";
+            s += "'<span class=\"' + __className(" + ret.obj + ",'" + ret.val + "') + '\">'+(" + unescape(ret.code) + ")+'</span>'+\n'";
         return s;
       })
       .replace(settings.modelBind || noMatch, function(match, code){
-        // we're not yet doing anything except interpolating here
-        return "'+\n(" + unescape(code) + ")+\n'";
+        var ret = extractValueAndObject(code, settings);
+        var k  = "'+\n__boundModel(" + ret.obj + ")+\n'";
+            // don't need the closing quotation here because the template should already include it
+            k += "'+\n(" + unescape(code) + ")+'\" onchange=\"Leverage.Template.onInputChange(\\'' + __binderId(" + ret.obj + ",'" + ret.val + "') + '\\', this)'+\n'";
+        return k;
       })
       .replace(settings.escape || noMatch, function(match, code) {
         return "'+\n_.escape(" + unescape(code) + ")+\n'";
@@ -675,8 +683,10 @@
 
     source = "var __p='';" +
       "var print=function(){__p+=Array.prototype.join.call(arguments, '')};\n" +
-      "var __className=function(binder, attr){ return 'data-bind-'+binder.id+'-'+attr.replace(/\(\)\s*$/, ''); };" +
+      "var __binderId=function(binder, attr){ return binder.id + '-' + attr.replace(/\(\)\s*$/, ''); };" +
+      "var __className=function(binder, attr){ return 'data-bind-'+__binderId(binder,attr); };" +
       "var __bind=function(binder, attr, isFunc){ var c=__className(binder,attr); if(!Leverage.Template.allBindings[c]){ binder.bind('change:'+attr, function(newVal){var h = $('.'+c); if(isFunc){ h.text(binder[attr]()); }else{ h.text(newVal); } }); Leverage.Template.allBindings[c]=true; } return''; };\n" +
+      "var __boundModel=function(m){ if(!Leverage.Template.boundModels[m.id]) Leverage.Template.boundModels[m.id] = m; return ''; };" +
 
 
       // "var __bindFunc=function(binder, func, id){if!}"
@@ -705,7 +715,18 @@
     , twoWayBind  : /\{<=>(.+?)<=>\}/g  // {<=> twoWayBind <=>}
   };
 
+  Template.onInputChange = function(what, input){
+    var parts = what.split('-')
+      , id    = parts[0]
+      , attr  = parts[1]
+      , model = Template.boundModels[id]
+      , value = $(input).val();
+
+    if(model){ model.set(attr, value); }
+  };
+
   Template.allBindings = {};
+  Template.boundModels = {};
 
   this.Leverage.Template = Template;
 }.call(this));

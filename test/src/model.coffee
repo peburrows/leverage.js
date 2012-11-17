@@ -27,4 +27,5 @@ describe 'Leverage.Model', ->
     it "should fire change events on bound functions when props are changed", ->
       @user.set('firstName', 'Phil')
       expect(@user.trigger).toHaveBeenCalledWith('change:fullName')
+      expect(@user.trigger).toHaveBeenCalledWith('change:firstName', 'Phil')
 

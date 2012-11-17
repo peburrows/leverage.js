@@ -89,19 +89,36 @@ describe('Leverage.Template', function() {
       });
     });
     return describe('that has template --> model bindings', function() {
-      beforeEach(function() {
-        var User;
-        User = Leverage.Model.extend();
-        this.user = new User({
-          name: 'Phil'
-        });
-        this.template = new Leverage.Template('<input type="text" value="{<= user.name =>}">');
-        return $('#body').html(this.template({
-          user: this.user
+      it('should render the initial value in the template', function() {
+        var template;
+        template = new Leverage.Template('<input type="text" value="{<= user.name =>}">');
+        $('#body').html(template({
+          user: {
+            name: 'Phil'
+          }
         }));
-      });
-      return it('should render the initial value in the template', function() {
         return expect($('#body input').val()).toEqual('Phil');
+      });
+      return describe('for naked variables', function() {
+        beforeEach(function() {
+          var User;
+          User = Leverage.Model.extend();
+          this.user = new User({
+            name: 'Phil'
+          });
+          this.template = new Leverage.Template('<input type="text" value="{<= user.name =>}">');
+          return $('#body').html(this.template({
+            user: this.user
+          }));
+        });
+        it('should render the initial value in the template', function() {
+          return expect($('#body input').val()).toEqual('Phil');
+        });
+        return it('should update the model when the input changes', function() {
+          $('#body input').val('Jimmy');
+          $('#body input').trigger('change', 'Jimmy');
+          return expect(this.user.name).toEqual('Jimmy');
+        });
       });
     });
   });

@@ -69,13 +69,25 @@ describe 'Leverage.Template', ->
           expect($('#body').text()).toEqual(@user.fullName())
 
     describe 'that has template --> model bindings', ->
-      beforeEach ->
-        User = Leverage.Model.extend()
-        @user = new User({name: 'Phil'})
-        @template = new Leverage.Template('<input type="text" value="{<= user.name =>}">')
-        $('#body').html(@template(user: @user))
-
       it 'should render the initial value in the template', ->
+        template = new Leverage.Template('<input type="text" value="{<= user.name =>}">')
+        $('#body').html(template(user:{name: 'Phil'}))
         expect( $('#body input').val() ).toEqual('Phil');
+
+      describe 'for naked variables', ->
+        beforeEach ->
+          User = Leverage.Model.extend()
+          @user = new User({name: 'Phil'})
+          @template = new Leverage.Template('<input type="text" value="{<= user.name =>}">')
+          $('#body').html(@template(user: @user))
+
+        it 'should render the initial value in the template', ->
+          expect( $('#body input').val() ).toEqual('Phil');
+        it 'should update the model when the input changes', ->
+          $('#body input').val('Jimmy')
+          $('#body input').trigger('change', 'Jimmy')
+          expect( @user.name ).toEqual('Jimmy')
+
+
 
 
