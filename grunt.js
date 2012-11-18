@@ -12,7 +12,11 @@ module.exports = function(grunt) {
       banner: '/*! Leverage.js - v<%= meta.version %> - ' +
         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
         '* Copyright (c) <%= grunt.template.today("yyyy") %> ' +
-        'Phil Burrows; Licensed MIT */'
+        'Phil Burrows; Licensed MIT */',
+      wrapper: {
+        start: ';(function(){\n',
+        end:   '\n}.call(this));'
+      }
     },
     lint: {
       files: ['grunt.js', 'lib/**/*.js']
