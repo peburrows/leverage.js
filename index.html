@@ -9,13 +9,16 @@
 
       var User = Leverage.Model.extend({
         initialize: function(attrs){
-          console.log("yeah, sure...")
           for(key in attrs){ this[key] = attrs[key]; }
         },
 
         fullName: function(){
           return this.firstName + ' ' + this.lastName;
-        }.boundTo('firstName', 'lastName')
+        }.boundTo('firstName', 'lastName'),
+
+        setFirstName: function(n){
+          this.firstName = n.toUpperCase();
+        }
       });
 
       User.validatesPresenceOf('firstName');
@@ -23,7 +26,7 @@
 
       User.include(Leverage.Callbacks);
       User.before('fullName', function(){
-        console.log("just want to test callbacks");
+        // noop
       });
 
       var user = new User({firstName: 'P', lastName: 'Burrows'});
@@ -33,12 +36,14 @@
       var bound1 = new Leverage.Template('<h3>Rendered at {= new Date() =}</h3><p>Hello, {=> firstName <=}</p>');
       var bound2 = new Leverage.Template('<p>Can be bound in multiple places, within multiple templates: {=> user.fullName() <=}</p>');
       var bound3 = new Leverage.Template('<p>Binding is optional though: {= user.firstName =}</p>');
+      var bound4 = new Leverage.Template('<p>Bind an input to a model value: <input type="text" value="{<= user.firstName:onkeyup =>}"></p>');
 
       $(document).ready(function(){
         $('body')
           .append(bound1(user))
           .append(bound2({user: user}))
-          .append(bound3({user: user}));
+          .append(bound3({user: user}))
+          .append(bound4({user: user}));
       });
     </script>
   </head>

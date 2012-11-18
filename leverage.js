@@ -331,8 +331,13 @@
 
     set: function(attr, val, shouldTrigger){
       if(shouldTrigger == null){ shouldTrigger = true; }
-      this[attr] = val;
-      if(shouldTrigger){ this.trigger('change:' + attr, val); }
+      var upped  = attr[0].toUpperCase() + attr.slice(1);
+
+      // if there's a setter defined, call that
+      if(this['set'+upped]) { this['set'+upped](val) }
+      else                  { this[attr] = val; }
+
+      if(shouldTrigger){ this.trigger('change:' + attr, this.get(attr)); }
       return this;
     },
 
@@ -669,9 +674,20 @@
       })
       .replace(settings.modelBind || noMatch, function(match, code){
         var ret = extractValueAndObject(code, settings);
+
+        var parts     = ret.val.split(/\s*:\s*/)
+          , bindEvent = parts.length > 1 ? parts[1] : 'onchange';
+
+        if(!(/^on/).test(bindEvent)){ bindEvent = 'on'+bindEvent; }
+
+        // now, make sure we have only what we need in the value
+        ret.val = parts[0];
+        code    = code.split(/\s*:\s*/)[0];
+
         var k  = "'+\n__boundModel(" + ret.obj + ")+\n'";
             // don't need the closing quotation here because the template should already include it
-            k += "'+\n(" + unescape(code) + ")+'\" onchange=\"Leverage.Template.onInputChange(\\'' + __binderId(" + ret.obj + ",'" + ret.val + "') + '\\', this)'+\n'";
+            k += "'+\n(" + unescape(code) + ")+'\" " + bindEvent + "=\"Leverage.Template.onInputChange(\\'' + __binderId(" + ret.obj + ",'" + ret.val + "') + '\\', this)'+\n'";
+
         return k;
       })
       .replace(settings.escape || noMatch, function(match, code) {
