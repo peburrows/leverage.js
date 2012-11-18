@@ -1,4 +1,4 @@
-/*! Leverage.js - v0.0.2 - 2012-11-17
+/*! Leverage.js - v0.0.2 - 2012-11-18
 * Copyright (c) 2012 Phil Burrows; Licensed MIT */
 
 (function(){
@@ -21,16 +21,36 @@
 }.call(this));
 
 (function(){
+  // it doesn't work properly to do this in a function this way
+  var setupInitializeInheritance = function(parent, child, args){
+    var parentInit = parent.prototype.initialize
+      , childInit = child.initialize;
+
+    if(!childInit){ childInit = child.instanceMethods ? child.instanceMethods.initialize : null }
+    if(!childInit){ childInit = child.classMethods    ? child.classMethods.initialize    : null }
+
+    return function(){
+      if(childInit) { childInit.apply(parent, args); console.log("called child init"); }
+      if(parentInit){ parentInit.apply(parent, args); console.log("called parent init", parentInit); }
+    };
+  };
+
   Function.prototype.include = function(){
     for (var i = 0; i < arguments.length; i++){
       // need to avoid overwriting the initialize method...
       var oldInit = this.prototype.initialize
         , argInit = arguments[i].initialize;
 
-      var newInit = function(){
-        if( argInit ){ argInit.apply(this, arguments); }
-        if( oldInit ){ oldInit.apply(this, arguments); }
-      };
+      if(!argInit){ argInit = arguments[i].instanceMethods ? arguments[i].instanceMethods.initialize : null }
+      if(!argInit){ argInit = arguments[i].classMethods    ? arguments[i].classMethods.initialize    : null }
+
+      var newInit;
+      if(argInit){
+        newInit = function(){
+          if( argInit ){ argInit.apply(this, arguments); }
+          if( oldInit ){ oldInit.apply(this, arguments); }
+        };
+      }
 
 
       if(arguments[i].instanceMethods){
@@ -41,7 +61,7 @@
 
       if(arguments[i].classMethods){ _.extend(this, arguments[i].classMethods); }
 
-      this.prototype.initialize = newInit;
+      this.prototype.initialize = newInit || this.prototype.initialize;
     }
     return this;
   };
@@ -173,9 +193,12 @@
         for(var prop in this){
           if(typeof this[prop] !== 'undefined' && this[prop].__boundProperties){
             for (var i = this[prop].__boundProperties.length - 1; i >= 0; i--) {
-              this.bind('change:'+this[prop].__boundProperties[i], function(e, data){
-                self.trigger('change:'+prop);
-              });
+              // do this in a function so we make sure not to screw up variables
+              (function(p, ind){
+                this.bind('change:'+this[p].__boundProperties[ind], function(e, data){
+                  self.trigger('change:'+p);
+                });
+              }).call(this, prop, i);
             }
           }
         }
@@ -303,24 +326,9 @@
     return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
   };
 
-  var setupBindings = function(obj){
-    for(var prop in obj){
-      if(obj[prop].__boundProperties){
-        for (var i = obj[prop].__boundProperties.length - 1; i >= 0; i--) {
-          var e = 'change:' + obj[prop].__boundProperties[i]
-            , t = 'change:' + prop;
-          obj.bind(e , function(){
-            obj.trigger(t);
-          });
-        }
-      }
-    }
-  };
-
   var Model = Leverage.Class.extend({
     __initialize: function(){
       Leverage.bindLeverageFunctions(this);
-      setupBindings(this);
       this.id = this.id || guid();
     },
 
