@@ -1,7 +1,5 @@
 describe 'Leverage.Validations', ->
-  User = ->
-    this.attrs = {}
-    this
+  User = Leverage.Class.extend(attrs:{})
   User.include(Leverage.Validations)
 
   beforeEach ->
@@ -52,7 +50,7 @@ describe 'Leverage.Validations', ->
         expect(@user.getErrors().blank()).toEqual(true)
 
   describe 'validatesLengthOf', ->
-    Length = ->
+    Length = Leverage.Class.extend()
     Length.include(Leverage.Validations)
     Length.validatesLengthOf('firstName', 3)
     beforeEach ->

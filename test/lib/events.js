@@ -1,7 +1,7 @@
 
 describe('Leverage.Events', function() {
   var User, user;
-  User = function() {};
+  User = Leverage.Class.extend();
   user = null;
   beforeEach(function() {
     User.include(Leverage.Events);

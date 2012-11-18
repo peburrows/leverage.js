@@ -25,10 +25,10 @@ describe 'Leverage Utils', ->
       it 'should extend classMethods', ->
         expect(User.classMethod).toEqual(jasmine.any(Function))
 
-    describe 'calling Class.extend', ->
+    describe 'calling Class.__extend', ->
       user = null
       beforeEach ->
-        User.extend(FullModule)
+        User.__extend(FullModule)
         user = new User
 
       it 'should include instanceMethods', ->
@@ -51,10 +51,10 @@ describe 'Leverage Utils', ->
       it 'should not add them as class methods', ->
         expect(User.method).toEqual(undefined)
 
-    describe 'calling Class.extend', ->
+    describe 'calling Class.__extend', ->
       user = null
       beforeEach ->
-        User.extend(SingleModule)
+        User.__extend(SingleModule)
         user = new User
 
       it 'should add them as class methods', ->

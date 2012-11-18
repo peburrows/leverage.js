@@ -1,5 +1,5 @@
 describe 'Leverage.Events', ->
-  User = ->
+  User = Leverage.Class.extend()
   user = null
   beforeEach ->
     User.include(Leverage.Events)

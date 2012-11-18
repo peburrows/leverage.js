@@ -31,11 +31,11 @@ describe('Leverage Utils', function() {
         return expect(User.classMethod).toEqual(jasmine.any(Function));
       });
     });
-    return describe('calling Class.extend', function() {
+    return describe('calling Class.__extend', function() {
       var user;
       user = null;
       beforeEach(function() {
-        User.extend(FullModule);
+        User.__extend(FullModule);
         return user = new User;
       });
       it('should include instanceMethods', function() {
@@ -61,11 +61,11 @@ describe('Leverage Utils', function() {
         return expect(User.method).toEqual(void 0);
       });
     });
-    return describe('calling Class.extend', function() {
+    return describe('calling Class.__extend', function() {
       var user;
       user = null;
       beforeEach(function() {
-        User.extend(SingleModule);
+        User.__extend(SingleModule);
         return user = new User;
       });
       it('should add them as class methods', function() {

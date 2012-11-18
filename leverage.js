@@ -42,7 +42,6 @@
         , argInit = arguments[i].initialize;
 
       if(!argInit){ argInit = arguments[i].instanceMethods ? arguments[i].instanceMethods.initialize : null }
-      if(!argInit){ argInit = arguments[i].classMethods    ? arguments[i].classMethods.initialize    : null }
 
       var newInit;
       if(argInit){
@@ -66,8 +65,21 @@
     return this;
   };
 
-  Function.prototype.extend = function(){
+  Function.prototype.__extend = function(){
     for (var i = 0; i < arguments.length; i++){
+      var oldInit = this.prototype.initialize
+        , argInit = arguments[i].initialize;
+
+      if(!argInit){ argInit = arguments[i].classMethods    ? arguments[i].classMethods.initialize    : null }
+
+      var newInit;
+      if(argInit){
+        newInit = function(){
+          if( argInit ){ argInit.apply(this, arguments); }
+          if( oldInit ){ oldInit.apply(this, arguments); }
+        };
+      }
+
       if(arguments[i].classMethods){
         _.extend(this, arguments[i].classMethods);
       }else{
@@ -75,6 +87,8 @@
       }
 
       if(arguments[i].instanceMethods){ _.extend(this.prototype, arguments[i].instanceMethods); }
+
+      this.prototype.initialize = newInit || this.prototype.initialize;
     }
     return this;
   };
@@ -159,19 +173,19 @@
     classMethods : {
       before: function(fn, callback){
         var orig = this.prototype[fn];
-        this.prototype[fn] = function(){
+        this.prototype[fn] = _.extend(function(){
           callback.apply(this, arguments);
           return orig.apply(this, arguments);
-        };
+        }, orig);
       },
 
       after: function(fn, callback){
         var orig = this.prototype[fn];
-        this.prototype[fn] = function(){
+        this.prototype[fn] = _.extend(function(){
           var ret = orig.apply(this, arguments);
           callback.apply(this, arguments);
           return ret;
-        };
+        }, orig);
       }
     }
   };
@@ -244,6 +258,37 @@
       for(var key in attrs){ this[key] = attrs[key]; }
     }
   };
+
+  // Class.include = function(){
+  //   for (var i = 0; i < arguments.length; i++){
+  //     // need to avoid overwriting the initialize method...
+  //     var oldInit = this.prototype.initialize
+  //       , argInit = arguments[i].initialize;
+
+  //     if(!argInit){ argInit = arguments[i].instanceMethods ? arguments[i].instanceMethods.initialize : null }
+  //     if(!argInit){ argInit = arguments[i].classMethods    ? arguments[i].classMethods.initialize    : null }
+
+  //     var newInit;
+  //     if(argInit){
+  //       newInit = function(){
+  //         if( argInit ){ argInit.apply(this, arguments); }
+  //         if( oldInit ){ oldInit.apply(this, arguments); }
+  //       };
+  //     }
+
+
+  //     if(arguments[i].instanceMethods){
+  //       _.extend(this.prototype, arguments[i].instanceMethods);
+  //     }else{
+  //       _.extend(this.prototype, arguments[i]);
+  //     }
+
+  //     if(arguments[i].classMethods){ _.extend(this, arguments[i].classMethods); }
+
+  //     this.prototype.initialize = newInit || this.prototype.initialize;
+  //   }
+  //   return this;
+  // };
 
   Class.extend = function(instanceProps, classProps){
     var child
@@ -588,7 +633,7 @@
     return this;
   };
 
-  Router.extend(Leverage.Events);
+  Router.include(Leverage.Events);
   this.Leverage.Router = Router;
 }.call(this));
 

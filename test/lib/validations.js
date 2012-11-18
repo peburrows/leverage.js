@@ -1,10 +1,9 @@
 
 describe('Leverage.Validations', function() {
   var User;
-  User = function() {
-    this.attrs = {};
-    return this;
-  };
+  User = Leverage.Class.extend({
+    attrs: {}
+  });
   User.include(Leverage.Validations);
   beforeEach(function() {
     return this.user = new User;
@@ -60,7 +59,7 @@ describe('Leverage.Validations', function() {
   });
   return describe('validatesLengthOf', function() {
     var Length;
-    Length = function() {};
+    Length = Leverage.Class.extend();
     Length.include(Leverage.Validations);
     Length.validatesLengthOf('firstName', 3);
     beforeEach(function() {
