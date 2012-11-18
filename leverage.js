@@ -21,28 +21,14 @@
 }.call(this));
 
 (function(){
-  // it doesn't work properly to do this in a function this way
-  var setupInitializeInheritance = function(parent, child, args){
-    var parentInit = parent.prototype.initialize
-      , childInit = child.initialize;
-
-    if(!childInit){ childInit = child.instanceMethods ? child.instanceMethods.initialize : null }
-    if(!childInit){ childInit = child.classMethods    ? child.classMethods.initialize    : null }
-
-    return function(){
-      if(childInit) { childInit.apply(parent, args); console.log("called child init"); }
-      if(parentInit){ parentInit.apply(parent, args); console.log("called parent init", parentInit); }
-    };
-  };
-
   Function.prototype.include = function(){
     for (var i = 0; i < arguments.length; i++){
       // need to avoid overwriting the initialize method...
       var oldInit = this.prototype.initialize
         , argInit = arguments[i].initialize;
 
-      if(!argInit){ argInit = arguments[i].instanceMethods ? arguments[i].instanceMethods.initialize : null }
-      if(!argInit){ argInit = arguments[i].classMethods    ? arguments[i].classMethods.initialize    : null }
+      if(!argInit){ argInit = arguments[i].instanceMethods ? arguments[i].instanceMethods.initialize : null; }
+      if(!argInit){ argInit = arguments[i].classMethods    ? arguments[i].classMethods.initialize    : null; }
 
       var newInit;
       if(argInit){
@@ -185,7 +171,7 @@
                 this.bind('change:'+this[p].__boundProperties[ind], function(e, data){
                   self.trigger('change:'+p);
                 });
-              }).call(this, prop, i);
+              }.call(this, prop, i));
             }
           }
         }
@@ -292,7 +278,7 @@
           var parts    = key.split(/\s+/)
             , handlers = [];
 
-          if(typeof this.events[key] != 'string'){
+          if(typeof this.events[key] !== 'string'){
             // must have been an array
             // so we need to loop through the array and add each to the handlers
             for (var i = this.events[key].length - 1; i >= 0; i--) {
@@ -304,9 +290,9 @@
 
           // just store a copy of the handlers for reference (and testing)
           this.__handlers[key] = this.__handlers[key] || [];
-          for (var i = handlers.length - 1; i >= 0; i--) {
-            this.__handlers[key].push(handlers[i])
-          };
+          for (var ii = handlers.length - 1; ii >= 0; ii--) {
+            this.__handlers[key].push(handlers[ii]);
+          }
 
           this.el.delegate(parts[0], parts[1], function(e){
             // pass the event and element to the handler(s)

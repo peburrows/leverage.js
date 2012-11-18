@@ -1,4 +1,4 @@
-/*global module:false*/
+/*global module:false require:false*/
 
 var packageInfo = require('package.json');
 
@@ -9,10 +9,11 @@ module.exports = function(grunt) {
   grunt.initConfig({
     meta: {
       version: packageInfo.version,
+      license: packageInfo.license,
       banner: '/*! Leverage.js - v<%= meta.version %> - ' +
         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
         '* Copyright (c) <%= grunt.template.today("yyyy") %> ' +
-        'Phil Burrows; Licensed MIT */',
+        'Phil Burrows; Licensed <%= meta.license %> */',
       wrapper: {
         start: ';(function(){\n',
         end:   '\n}.call(this));'
