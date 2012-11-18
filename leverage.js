@@ -66,34 +66,6 @@
     return this;
   };
 
-  Function.prototype.__extend = function(){
-    for (var i = 0; i < arguments.length; i++){
-      var oldInit = this.prototype.initialize
-        , argInit = arguments[i].initialize;
-
-      if(!argInit){ argInit = arguments[i].classMethods    ? arguments[i].classMethods.initialize    : null }
-
-      var newInit;
-      if(argInit){
-        newInit = function(){
-          if( argInit ){ argInit.apply(this, arguments); }
-          if( oldInit ){ oldInit.apply(this, arguments); }
-        };
-      }
-
-      if(arguments[i].classMethods){
-        _.extend(this, arguments[i].classMethods);
-      }else{
-        _.extend(this, arguments[i]);
-      }
-
-      if(arguments[i].instanceMethods){ _.extend(this.prototype, arguments[i].instanceMethods); }
-
-      this.prototype.initialize = newInit || this.prototype.initialize;
-    }
-    return this;
-  };
-
   Function.prototype.boundTo = function(){
     var self = this
       , newFunc = function(){ return self.apply(this, arguments); };
@@ -241,6 +213,7 @@
 
   // alias 'trigger' as 'fire'
   Events.fire = Events.trigger;
+  Events.on   = Events.bind;
 
   this.Leverage.Events = Events;
 }.call(this));
@@ -363,6 +336,8 @@
   };
 
   var Model = Leverage.Class.extend({
+    // since we're calling all the initialize methods in the inheritance chain,
+    // we can just name this plain ol' "initialize"
     __initialize: function(){
       Leverage.bindLeverageFunctions(this);
       this.id = this.id || guid();

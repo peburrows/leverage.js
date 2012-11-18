@@ -15,7 +15,6 @@ describe 'Leverage.Class', ->
   describe 'extending', ->
     User = Leverage.Class.extend( initialize: -> )
     user = new User
-    console.log(user.initialize)
 
     describe '.extend', ->
       it "should return a constructor", ->

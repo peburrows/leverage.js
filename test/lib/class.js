@@ -30,7 +30,6 @@ describe('Leverage.Class', function() {
       initialize: function() {}
     });
     user = new User;
-    console.log(user.initialize);
     describe('.extend', function() {
       return it("should return a constructor", function() {
         expect(User).toEqual(jasmine.any(Function));
