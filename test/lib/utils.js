@@ -17,7 +17,7 @@ describe('Leverage Utils', function() {
     return User = function() {};
   });
   describe('a module that has the instanceMethods and classMethods properties', function() {
-    describe('calling Class.include', function() {
+    return describe('calling Class.include', function() {
       var user;
       user = null;
       beforeEach(function() {
@@ -31,23 +31,9 @@ describe('Leverage Utils', function() {
         return expect(User.classMethod).toEqual(jasmine.any(Function));
       });
     });
-    return describe('calling Class.__extend', function() {
-      var user;
-      user = null;
-      beforeEach(function() {
-        User.__extend(FullModule);
-        return user = new User;
-      });
-      it('should include instanceMethods', function() {
-        return expect(user.instanceMethod).toEqual(jasmine.any(Function));
-      });
-      return it('should extend classMethods', function() {
-        return expect(User.classMethod).toEqual(jasmine.any(Function));
-      });
-    });
   });
   return describe('a module that does not have instanceMethods or classMethods properties', function() {
-    describe('calling Class.include', function() {
+    return describe('calling Class.include', function() {
       var user;
       user = null;
       beforeEach(function() {
@@ -59,20 +45,6 @@ describe('Leverage Utils', function() {
       });
       return it('should not add them as class methods', function() {
         return expect(User.method).toEqual(void 0);
-      });
-    });
-    return describe('calling Class.__extend', function() {
-      var user;
-      user = null;
-      beforeEach(function() {
-        User.__extend(SingleModule);
-        return user = new User;
-      });
-      it('should add them as class methods', function() {
-        return expect(User.method).toEqual(jasmine.any(Function));
-      });
-      return it('should not add them as instance methods', function() {
-        return expect(user.method).toEqual(void 0);
       });
     });
   });
