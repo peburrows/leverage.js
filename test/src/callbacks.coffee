@@ -16,6 +16,7 @@ describe 'Leverage.Callbacks', ->
 
       @user = new @User(firstName:'Phil',lastName:'Burrows')
 
+
     it 'should properly fire the callback', ->
       @user.fullName()
       expect(@User.beforeCallback).toHaveBeenCalled()
