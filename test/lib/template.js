@@ -46,7 +46,7 @@ describe('Leverage.Template', function() {
           }));
         });
         it('should the bound property in the proper tag with identifier', function() {
-          return expect($('#body').find(':first')).toHaveClass(boundClass(this.user.id, 'name'));
+          return expect($('#body').find(':first')).toHaveClass(boundClass(this.user._leverageID, 'name'));
         });
         return it('should update the text when the object property', function() {
           this.user.set('name', 'Jimmy');
@@ -59,7 +59,7 @@ describe('Leverage.Template', function() {
           return $('#body').html(this.template(this.user));
         });
         it('should wrap the bound variable in the proper tag with identifier', function() {
-          return expect($('#body').find(':first')).toHaveClass(boundClass(this.user.id, 'name'));
+          return expect($('#body').find(':first')).toHaveClass(boundClass(this.user._leverageID, 'name'));
         });
         return it('should update the text when the variable changes', function() {
           this.user.set('name', 'Jimmy');
@@ -75,7 +75,7 @@ describe('Leverage.Template', function() {
           }));
         });
         it('should wrap the bound function in the proper tag with identifier', function() {
-          return expect($('#body > :first')).toHaveClass(boundClass(this.user.id, 'fullName'));
+          return expect($('#body > :first')).toHaveClass(boundClass(this.user._leverageID, 'fullName'));
         });
         it('should, of course, render the proper text', function() {
           return expect($('#body').text()).toEqual(this.user.fullName());

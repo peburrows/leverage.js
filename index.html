@@ -48,5 +48,14 @@
     </script>
   </head>
   <body>
+    <!-- sample templates: -->
+    <script type="text/x-template" id="sample-template">
+      <div>
+        <input type="text" data-bind-value="user.firstName:onkeyup">
+        <input type="text" data-bind-value="user.lastName:onchange">
+        <span data-bind="user.fullName()" />
+      </div>
+    </script>
+
   </body>
 </html>

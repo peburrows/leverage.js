@@ -1,4 +1,4 @@
-/*! Leverage.js - v0.0.2 - 2012-11-18
+/*! Leverage.js - v0.0.2 - 2012-11-19
 * Copyright (c) 2012 Phil Burrows; Licensed MIT */
 
 (function(){
@@ -24,11 +24,11 @@
   Function.prototype.include = function(){
     for (var i = 0; i < arguments.length; i++){
       // need to avoid overwriting the initialize method...
-      var oldInit = this.prototype.initialize
-        , argInit = arguments[i].initialize;
+      var oldInit = this.prototype.__initialize
+        , argInit = arguments[i].__initialize;
 
-      if(!argInit){ argInit = arguments[i].instanceMethods ? arguments[i].instanceMethods.initialize : null; }
-      if(!argInit){ argInit = arguments[i].classMethods    ? arguments[i].classMethods.initialize    : null; }
+      if(!argInit){ argInit = arguments[i].instanceMethods ? arguments[i].instanceMethods.__initialize : null; }
+      if(!argInit){ argInit = arguments[i].classMethods    ? arguments[i].classMethods.__initialize    : null; }
 
       var newInit;
       if(argInit){
@@ -47,7 +47,7 @@
 
       if(arguments[i].classMethods){ _.extend(this, arguments[i].classMethods); }
 
-      this.prototype.initialize = newInit || this.prototype.initialize;
+      this.prototype.__initialize = newInit || this.prototype.__initialize;
     }
     return this;
   };
@@ -59,6 +59,7 @@
     newFunc.__boundProperties = Array.prototype.slice.call(arguments, 0);
     return newFunc;
   };
+
 }.call(this));
 
 (function(){
@@ -161,7 +162,7 @@
         return this;
       },
 
-      initialize: function(){
+      __initialize: function(){
         var self = this;
         for(var prop in this){
           if(typeof this[prop] !== 'undefined' && this[prop].__boundProperties){
@@ -210,12 +211,27 @@
       // for internal initialization that shouldn't be overwritten
       this.__initialize.apply(this, arguments);
     }
-    this.initialize.apply(this, arguments);
+
+    if(typeof this.initialize !== 'undefined'){
+      this.initialize.apply(this, arguments);
+    }
   };
 
-  Class.prototype.initialize = function(attrs){
+  Class.prototype.__initialize = function(){
+    this.setAttrs.apply(this, arguments)
+  };
+
+  // I really don't know how I feel about doing this by default
+  Class.prototype.setAttrs = function(attrs){
     if(typeof attrs === 'object'){
       for(var key in attrs){ this[key] = attrs[key]; }
+    }
+  }
+
+  Class.prototype.super = function(what){
+    // this is a tacky way of doing this, but it should work fine
+    if(typeof this.constructor.__super[what] !== 'undefined'){
+      this.constructor.__super[what].apply(this, Array.prototype.slice.call(arguments, 1))
     }
   };
 
@@ -235,14 +251,14 @@
     if(instanceProps){ _.extend(child.prototype, instanceProps); }
     if(classProps)   { _.extend(child, classProps); }
 
-    var oldInit = this.prototype.initialize
+    var oldInit = this.prototype.__initialize
       , argInit;
 
-    if(instanceProps)         { argInit = instanceProps.initialize; }
-    if(!argInit && classProps){ argInit = classProps.initialize; }
+    // so, I think __initialize is the one that should auto-call super
+    if(instanceProps)         { argInit = instanceProps.__initialize; }
+    if(!argInit && classProps){ argInit = classProps.__initialize; }
 
-    // I don't know if we really want to do things this way...
-    // but for now, we're going to call the initialize method
+    // we're going to call the __initialize method
     // for every class in the inheritance chain
 
     var newInit;
@@ -253,7 +269,7 @@
       };
     }
 
-    child.prototype.initialize = newInit || parent.prototype.initialize;
+    child.prototype.__initialize = newInit || parent.prototype.__initialize;
 
     child.__super = parent.prototype;
 
@@ -265,7 +281,7 @@
 
 (function(){
   var Controller = Leverage.Class.extend({
-    initialize: function(){
+    __initialize: function(){
       var self = this;
       this.events = this.events || {};
       this.__handlers = {};
@@ -322,11 +338,11 @@
   };
 
   var Model = Leverage.Class.extend({
-    // since we're calling all the initialize methods in the inheritance chain,
-    // we can just name this plain ol' "initialize"
     __initialize: function(){
+      this.super('initialize', arguments)
+      // this will auto-call super, so don't do it manually, or you'll have issues
       Leverage.bindLeverageFunctions(this);
-      this.id = this.id || guid();
+      this._leverageID = this._leverageID || guid();
     },
 
     set: function(attr, val, shouldTrigger){
@@ -341,6 +357,7 @@
       return this;
     },
 
+    // I'd like to add key path getting, i.e. get('user.address.city')
     get: function(attr){
       return this[attr];
     }
@@ -705,10 +722,10 @@
 
     source = "var __p='';" +
       "var print=function(){__p+=Array.prototype.join.call(arguments, '')};\n" +
-      "var __binderId=function(binder, attr){ return binder.id + '-' + attr.replace(/\(\)\s*$/, ''); };" +
+      "var __binderId=function(binder, attr){ return binder._leverageID + '-' + attr.replace(/\(\)\s*$/, ''); };" +
       "var __className=function(binder, attr){ return 'data-bind-'+__binderId(binder,attr); };" +
       "var __bind=function(binder, attr, isFunc){ var c=__className(binder,attr); if(!Leverage.Template.allBindings[c]){ binder.bind('change:'+attr, function(newVal){var h = $('.'+c); if(isFunc){ h.text(binder[attr]()); }else{ h.text(newVal); } }); Leverage.Template.allBindings[c]=true; } return''; };\n" +
-      "var __boundModel=function(m){ if(!Leverage.Template.boundModels[m.id]) Leverage.Template.boundModels[m.id] = m; return ''; };" +
+      "var __boundModel=function(m){ if(!Leverage.Template.boundModels[m._leverageID]) Leverage.Template.boundModels[m._leverageID] = m; return ''; };" +
 
 
       // "var __bindFunc=function(binder, func, id){if!}"

@@ -10,7 +10,7 @@ describe 'Leverage.Model', ->
 
   describe 'an instance', ->
     it "should have an id assigned", ->
-      expect(@user.id).toBeDefined()
+      expect(@user._leverageID).toBeDefined()
 
     it "should allow the getting of attributes", ->
       @user.set('firstName', 'Phil')

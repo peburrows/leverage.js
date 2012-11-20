@@ -31,7 +31,7 @@ describe 'Leverage.Template', ->
           $('#body').html(@template(user: @user))
 
         it 'should the bound property in the proper tag with identifier', ->
-          expect($('#body').find(':first')).toHaveClass(boundClass(@user.id, 'name'))
+          expect($('#body').find(':first')).toHaveClass(boundClass(@user._leverageID, 'name'))
 
         it 'should update the text when the object property', ->
           @user.set('name', 'Jimmy')
@@ -43,7 +43,7 @@ describe 'Leverage.Template', ->
           $('#body').html(@template(@user))
 
         it 'should wrap the bound variable in the proper tag with identifier', ->
-          expect($('#body').find(':first')).toHaveClass(boundClass(@user.id, 'name'))
+          expect($('#body').find(':first')).toHaveClass(boundClass(@user._leverageID, 'name'))
 
         it 'should update the text when the variable changes', ->
           @user.set('name', 'Jimmy')
@@ -56,7 +56,7 @@ describe 'Leverage.Template', ->
           $('#body').html(@template(user:@user))
 
         it 'should wrap the bound function in the proper tag with identifier', ->
-          expect($('#body > :first')).toHaveClass(boundClass(@user.id, 'fullName'))
+          expect($('#body > :first')).toHaveClass(boundClass(@user._leverageID, 'fullName'))
 
         it 'should, of course, render the proper text', ->
           expect($('#body').text()).toEqual(@user.fullName())
