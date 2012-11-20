@@ -26,3 +26,14 @@ And a template that doesn't need any binding could look like this:
   </div>
 </script>
 ```
+
+I can't decide, however, whether I like the above binding sytax better than this other option:
+<script id="user-template" type="leverage/bound-template">
+  <div>
+    <span data-bind="user.fullName()"/>
+    <input data-bind="value:user.firstName:onkeyup">
+    <input data-bind="value:user.lastName:onkeyup">
+  </div>
+</script>
+
+The nice thing about that syntax is that walking the node tree could potentially be much faster. Honestly, though, it's kind of ugly, so I'm not exactly sure how I feel about that second binding option.
