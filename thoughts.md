@@ -1,8 +1,8 @@
 ## Templates
 
 Rendering templates is going to become a two-step process:
-  # parse the template via regexps and replace values (the way we're currently doing it)
-  # walk the node tree to setup bindings and replace values
+  1. parse the template via regexps and replace values (the way we're currently doing it)
+  2. walk the node tree to setup bindings and replace values
 
 I can't say that I exactly love the idea of essentially running through each template twice, but it's better to me than moving all the logic into HTML attributes. Plus, it seems to me that the templates should be able to be used for things other than just HTML (if one wanted to)
 
