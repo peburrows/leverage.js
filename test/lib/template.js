@@ -110,7 +110,7 @@ describe('Leverage.Template', function() {
         });
       });
     });
-    describe('when dealing with multiple templates', function() {
+    return describe('when dealing with multiple templates', function() {
       beforeEach(function() {
         this.user = new this.User;
         this.templates = {
@@ -141,7 +141,7 @@ describe('Leverage.Template', function() {
         expect($('#full-1').text()).toEqual(this.user.fullName());
         return expect($('#full-1').text()).toEqual($('#full-2').text());
       });
-      return it('should update *all* bound properties and functions', function() {
+      return it('should update *all* values in the template', function() {
         this.user.set('firstName', 'Jimmy').set('lastName', 'Allen');
         expect($('#first-1').text()).toEqual(this.user.firstName);
         expect($('#first-2').text()).toEqual(this.user.firstName);
@@ -149,39 +149,6 @@ describe('Leverage.Template', function() {
         expect($('#last-2').text()).toEqual(this.user.lastName);
         expect($('#full-1').text()).toEqual(this.user.fullName());
         return expect($('#full-2').text()).toEqual(this.user.fullName());
-      });
-    });
-    return describe('that has template --> model bindings', function() {
-      it('should render the initial value in the template', function() {
-        var template;
-        template = new Leverage.Template('<input type="text" value="{<= user.name =>}">');
-        $('#body').html(template({
-          user: {
-            name: 'Phil'
-          }
-        }));
-        return expect($('#body input').val()).toEqual('Phil');
-      });
-      return describe('for naked variables', function() {
-        beforeEach(function() {
-          var User;
-          User = Leverage.Model.extend();
-          this.user = new User({
-            name: 'Phil'
-          });
-          this.template = new Leverage.Template('<input type="text" value="{<= user.name =>}">');
-          return $('#body').html(this.template({
-            user: this.user
-          }));
-        });
-        it('should render the initial value in the template', function() {
-          return expect($('#body input').val()).toEqual('Phil');
-        });
-        return it('should update the model when the input changes', function() {
-          $('#body input').val('Jimmy');
-          $('#body input').trigger('change', 'Jimmy');
-          return expect(this.user.name).toEqual('Jimmy');
-        });
       });
     });
   });

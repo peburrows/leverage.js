@@ -113,7 +113,7 @@ describe 'Leverage.Template', ->
         expect( $('#full-1').text() ).toEqual(@user.fullName())
         expect( $('#full-1').text() ).toEqual($('#full-2').text())
 
-      it 'should update *all* bound properties and functions', ->
+      it 'should update *all* values in the template', ->
         @user.set('firstName', 'Jimmy').set('lastName', 'Allen')
         expect( $('#first-1').text() ).toEqual(@user.firstName)
         expect( $('#first-2').text() ).toEqual(@user.firstName)
@@ -122,25 +122,26 @@ describe 'Leverage.Template', ->
         expect( $('#full-1').text() ).toEqual(@user.fullName())
         expect( $('#full-2').text() ).toEqual(@user.fullName())
 
-    describe 'that has template --> model bindings', ->
-      it 'should render the initial value in the template', ->
-        template = new Leverage.Template('<input type="text" value="{<= user.name =>}">')
-        $('#body').html(template(user:{name: 'Phil'}))
-        expect( $('#body input').val() ).toEqual('Phil');
+    # # we no longer want to do template -> model binding this way...
+    # describe 'that has template --> model bindings', ->
+    #   it 'should render the initial value in the template', ->
+    #     template = new Leverage.Template('<input type="text" value="{<= user.name =>}">')
+    #     $('#body').html(template(user:{name: 'Phil'}))
+    #     expect( $('#body input').val() ).toEqual('Phil');
 
-      describe 'for naked variables', ->
-        beforeEach ->
-          User = Leverage.Model.extend()
-          @user = new User({name: 'Phil'})
-          @template = new Leverage.Template('<input type="text" value="{<= user.name =>}">')
-          $('#body').html(@template(user: @user))
+    #   describe 'for naked variables', ->
+    #     beforeEach ->
+    #       User = Leverage.Model.extend()
+    #       @user = new User({name: 'Phil'})
+    #       @template = new Leverage.Template('<input type="text" value="{<= user.name =>}">')
+    #       $('#body').html(@template(user: @user))
 
-        it 'should render the initial value in the template', ->
-          expect( $('#body input').val() ).toEqual('Phil');
-        it 'should update the model when the input changes', ->
-          $('#body input').val('Jimmy')
-          $('#body input').trigger('change', 'Jimmy')
-          expect( @user.name ).toEqual('Jimmy')
+    #     it 'should render the initial value in the template', ->
+    #       expect( $('#body input').val() ).toEqual('Phil');
+    #     it 'should update the model when the input changes', ->
+    #       $('#body input').val('Jimmy')
+    #       $('#body input').trigger('change', 'Jimmy')
+    #       expect( @user.name ).toEqual('Jimmy')
 
 
 
