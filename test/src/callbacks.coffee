@@ -3,7 +3,6 @@ describe 'Leverage.Callbacks', ->
     fullName = -> "#{@firstName} #{@lastName}"
     @User = Leverage.Model.extend(fullName: fullName.boundTo('firstNmae','lastName'))
 
-
   describe 'before callbacks', ->
     beforeEach ->
       @User.beforeCallback = ->

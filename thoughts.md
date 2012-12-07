@@ -10,10 +10,10 @@ So, a template with bindings, logic, and interpolation might look something like
 
 ```html
 <script id="user-template" type="leverage/bound-template">
-  <div>
-    <span data-bind="user.fullName()"/>
-    <input data-bind-value="user.firstName:onkeyup">
-    <input data-bind-value="user.lastName:onkeyup">
+  <div data-if="//logic goes here, maybe?">
+      <span data-bind="user.fullName()"/>
+      <input data-bind-value="user.firstName : onkeyup">
+      <input data-bind-value="user.lastName : onkeyup">
   </div>
 </script>
 ```
