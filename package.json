@@ -7,10 +7,11 @@
     "test": "test"
   },
   "devDependencies": {
-    "grunt-coffee": "~0.0.6"
+    "grunt-coffee": "~0.0.6",
+    "grunt-jasmine-runner": "0.6.x"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",

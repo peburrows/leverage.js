@@ -35,6 +35,13 @@ module.exports = function(grunt) {
       }
     },
 
+    jasmine: {
+      src: ['underscore.1.3.3.min.js', 'jquery.1.8.3.min.js', 'leverage.js'],
+      specs : 'test/lib/*.js',
+      template: 'test/template.tmpl',
+      helpers: ['test/lib/jasmine/jasmine-jquery.html']
+    },
+
     concat: {
       dist: {
         src: ['<banner:meta.banner>', 'lib/leverage.js', 'lib/utils.js', 'lib/validations.js', 'lib/callbacks.js', 'lib/events.js', 'lib/class.js', 'lib/**/*.js'],
@@ -50,7 +57,7 @@ module.exports = function(grunt) {
     watch: {
       tests: {
         files: 'test/src/**/*.coffee',
-        tasks: 'coffee:tests'
+        tasks: ['coffee:tests', 'test']
       },
       app: {
         files: '<config:lint.files>',
@@ -84,7 +91,8 @@ module.exports = function(grunt) {
     uglify: {}
   });
 
-  // Default task.
+  grunt.loadNpmTasks('grunt-jasmine-runner');
   grunt.registerTask('default', 'concat min');
+  grunt.registerTask('test', 'concat jasmine');
 
 };
