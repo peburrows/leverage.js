@@ -39,7 +39,7 @@ module.exports = function(grunt) {
       src: ['underscore.1.3.3.min.js', 'jquery.1.8.3.min.js', 'leverage.js'],
       specs : 'test/lib/*.js',
       template: 'test/template.tmpl',
-      helpers: ['test/lib/jasmine/jasmine-jquery.html']
+      helpers: ['test/lib/jasmine/jasmine-jquery.js']
     },
 
     concat: {
