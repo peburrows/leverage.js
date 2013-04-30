@@ -8,19 +8,12 @@
     <link rel="stylesheet" type="text/css" href="<%= style %>">
     <% }) %>
 
-    <% scripts.forEach(function(script){ %>
-    <script type="text/javascript" src="<%= script %>"></script>
-    <% }) %>
+    <% with (scripts) { %>
+      <% [].concat(jasmine, vendor, helpers, src, specs, reporters, start).forEach(function(script){ %>
+        <script type="text/javascript" src="<%= script %>"></script>
+        <% }); %>
+    <% }; %>
 
-    <% if (typeof specs !== 'undefined') { %>
-        <script type="text/javascript">
-        require([
-        <% specs.forEach(function(script, i){ %>
-            '<%= script %>' <% if (i !== specs.length-1){ %>,<% } %>
-        <% }) %>
-        ]);
-        </script>
-    <% } %>
 </head>
 
 <body>
