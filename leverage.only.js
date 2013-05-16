@@ -1,4 +1,4 @@
-/*! Leverage.js - v0.0.2 - 2013-04-30
+/*! Leverage.js - v0.1.0 - 2013-05-16
 * Copyright (c) 2013 Phil Burrows; Licensed MIT */
 ;(function($){
 
@@ -22,6 +22,51 @@
 }.call(this));
 
 (function(){
+  var Utils = {};
+
+  var escapes = {
+      '&': '&amp;'
+    , '<': '&lt;'
+    , '>': '&gt;'
+    , '"': '&quot;'
+    , "'": '&#x27;'
+    , '/': '&#x2F;'
+  };
+
+  var escapeArray = [];
+  for(var key in escapes){
+    escapeArray.push(key);
+  }
+
+  var escapeRegExp = new RegExp('[' + escapeArray.join('') + ']', 'g');
+
+  Utils.extend = function(obj, source){
+    if (source) {
+      for (var prop in source) {
+        obj[prop] = source[prop];
+      }
+    }
+    return obj;
+  };
+
+  Utils.defaults = function(obj, source){
+    if (source) {
+      for (var prop in source) {
+        if (obj[prop] === void 0) obj[prop] = source[prop];
+      }
+    }
+    return obj;
+  };
+
+  Utils.escape = function(string){
+    if (string == null) return '';
+    return ('' + string).replace(escapeRegExp, function(match) {
+      return escapes[match];
+    });
+  };
+
+  this.Leverage.Utils = Utils;
+
   Function.prototype.include = function(){
     for (var i = 0; i < arguments.length; i++){
       // need to avoid overwriting the initialize method...
@@ -41,12 +86,12 @@
 
 
       if(arguments[i].instanceMethods){
-        _.extend(this.prototype, arguments[i].instanceMethods);
+        Leverage.Utils.extend(this.prototype, arguments[i].instanceMethods);
       }else{
-        _.extend(this.prototype, arguments[i]);
+        Leverage.Utils.extend(this.prototype, arguments[i]);
       }
 
-      if(arguments[i].classMethods){ _.extend(this, arguments[i].classMethods); }
+      if(arguments[i].classMethods){ Leverage.Utils.extend(this, arguments[i].classMethods); }
 
       this.prototype.__initialize = newInit || this.prototype.__initialize;
     }
@@ -134,7 +179,7 @@
     classMethods : {
       before: function(fn, callback){
         var orig = this.prototype[fn];
-        this.prototype[fn] = _.extend(function(){
+        this.prototype[fn] = Leverage.Utils.extend(function(){
           callback.apply(this, arguments);
           return orig.apply(this, arguments);
         }, orig);
@@ -142,7 +187,7 @@
 
       after: function(fn, callback){
         var orig = this.prototype[fn];
-        this.prototype[fn] = _.extend(function(){
+        this.prototype[fn] = Leverage.Utils.extend(function(){
           var ret = orig.apply(this, arguments);
           callback.apply(this, arguments);
           return ret;
@@ -243,14 +288,14 @@
     // automatically call the parent's initialize method
     child = function(){ parent.apply(this, arguments); };
 
-    _.extend(child, parent);
+    Leverage.Utils.extend(child, parent);
 
     var Noop = function(){ this.constructor = child; };
     Noop.prototype = parent.prototype;
     child.prototype = new Noop();
 
-    if(instanceProps){ _.extend(child.prototype, instanceProps); }
-    if(classProps)   { _.extend(child, classProps); }
+    if(instanceProps){ Leverage.Utils.extend(child.prototype, instanceProps); }
+    if(classProps)   { Leverage.Utils.extend(child, classProps); }
 
     var oldInit = this.prototype.__initialize
       , argInit;
@@ -726,7 +771,7 @@
   };
 
   var Template = function(text, data, settings){
-    settings = _.defaults(settings || {}, Template.settings);
+    settings = Leverage.Utils.defaults(settings || {}, Template.settings);
 
     // Compile the template source, taking care to escape characters that
     // cannot be included in a string literal and then unescape them in code
@@ -761,7 +806,7 @@
         return k;
       })
       .replace(settings.escape || noMatch, function(match, code) {
-        return "'+\n_.escape(" + unescape(code) + ")+\n'";
+        return "'+\nLeverage.Utils.escape(" + unescape(code) + ")+\n'";
       })
       .replace(settings.interpolate || noMatch, function(match, code) {
         return "'+\n(" + unescape(code) + ")+\n'";
@@ -784,10 +829,10 @@
       // "var __bindFunc=function(binder, func, id){if!}"
       source + "return __p;\n";
 
-    var render = new Function(settings.variable || 'obj', '_', source);
-    if (data){ return render(data, _); }
+    var render = new Function(settings.variable || 'obj', source);
+    if (data){ return render(data); }
     var template = function(data) {
-      return render.call(this, data, _);
+      return render.call(this, data);
     };
 
     // Provide the compiled function source as a convenience for build time
