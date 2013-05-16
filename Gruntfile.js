@@ -6,7 +6,6 @@ module.exports = function(grunt) {
   var filesOnly = ['config/templates/wrapper-start.js', 'lib/leverage.js', 'lib/utils.js', 'lib/validations.js', 'lib/callbacks.js', 'lib/events.js', 'lib/class.js', 'lib/**/*.js', '<banner:meta.wrapper.end>', 'config/templates/wrapper-end.js']
     , files         = filesOnly.slice(0);
 
-  files.unshift('underscore.1.3.3.min.js');
   files.unshift('jquery.1.8.3.min.js');
 
   // Project configuration.
