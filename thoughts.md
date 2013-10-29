@@ -32,8 +32,8 @@ I can't decide, however, whether I like the above binding sytax better than this
 <script id="user-template" type="leverage/bound-template">
   <div>
     <span data-bind="user.fullName()"/>
-    <input data-bind="value:user.firstName:onkeyup">
-    <input data-bind="value:user.lastName:onkeyup">
+    <input data-bind-value="user.firstName:onkeyup">
+    <input data-bind-value="user.lastName:onkeyup">
   </div>
 </script>
 ```
