@@ -1,4 +1,4 @@
-/*! Leverage.js - v0.1.0 - 2013-05-16
+/*! Leverage.js - v0.1.0 - 2013-10-29
 * Copyright (c) 2013 Phil Burrows; Licensed MIT */
 ;(function($){
 
